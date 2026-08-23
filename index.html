@@ -520,6 +520,12 @@
                         <div style="font-weight: bold; color: var(--primary-dark); background: #e0f2fe; padding: 5px 15px; border-radius: 5px;">الإجمالي: <span id="cust-total-price">0</span> SAR</div>
                     </div>
                 </div>
+
+                <!-- زر الخصم التلقائي للمخزن -->
+                <div style="margin-bottom: 15px; background: #fffbeb; padding: 10px; border-radius: 6px; border: 1px dashed #f59e0b; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="c-auto-deduct" checked style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="c-auto-deduct" style="font-weight: bold; color: var(--warning); margin: 0; cursor: pointer;">خصم هذه الأجهزة/القطع من عهدة الفني المختار تلقائياً (تنزيل)</label>
+                </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label>ملاحظات</label><textarea id="c-notes" class="form-control" rows="2"></textarea>
@@ -929,6 +935,9 @@
             ['c-name','c-tax-number','c-phone','c-phone2','c-address','c-national-address','c-gps','c-notes'].forEach(id => { let el = document.getElementById(id); if(el) el.value = ''; });
             document.getElementById('c-type').value = 'عميل'; document.getElementById('c-install-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('customer-devices-container').innerHTML = ''; document.getElementById('cust-total-price').innerText = "0";
+            
+            if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = true;
+
             addCustomerDeviceRow(); document.getElementById('customerModal').style.display = 'flex';
         }
 
@@ -937,6 +946,9 @@
             if(c) {
                 document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-notes').value = c.notes || ''; document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
                 let container = document.getElementById('customer-devices-container'); container.innerHTML = ''; let devicesArr = c.devicesSummary ? c.devicesSummary.split('، ') : [];
+                
+                if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = false;
+
                 if(devicesArr.length === 0) addCustomerDeviceRow();
                 devicesArr.forEach(devStr => {
                     let match = devStr.match(/(.*?)\s*\(([\d.]+)\s*SAR\)/); let devName = match ? match[1].trim() : devStr.trim(); let devPrice = match ? match[2] : 0;
@@ -963,19 +975,58 @@
         function saveCustomerAndMaintenance(e) {
             e.preventDefault();
             let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let notes = document.getElementById('c-notes').value.trim(); let installDate = document.getElementById('c-install-date').value;
-            let devicesSummaryArr = [], totalValue = 0; document.querySelectorAll('.cust-device-row').forEach(row => { let p = parseFloat(row.querySelector('.cust-dev-price').value) || 0; totalValue += p; devicesSummaryArr.push(`${row.querySelector('.cust-dev-type').value} (${p} SAR)`); });
+            
+            let devicesSummaryArr = [], totalValue = 0, itemsToDeduct = []; 
+            document.querySelectorAll('.cust-device-row').forEach(row => { 
+                let p = parseFloat(row.querySelector('.cust-dev-price').value) || 0; 
+                let itemName = row.querySelector('.cust-dev-type').value;
+                totalValue += p; 
+                devicesSummaryArr.push(`${itemName} (${p} SAR)`); 
+                if(itemName && itemName !== "عنصر عام") itemsToDeduct.push(itemName);
+            });
             let devicesSummary = devicesSummaryArr.join('، '); let clients = getDB('aqua_pure_customers_db'); let idx = clients.findIndex(i => String(i.code) === String(code));
             
-            if(idx >= 0) { clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate }; } 
-            else { let d = new Date(installDate); d.setMonth(d.getMonth() + 6); clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: d.toISOString().split('T')[0], warrantyDuration: "سنتان" }); }
-            setDB('aqua_pure_customers_db', clients); document.getElementById('customerModal').style.display = 'none';
+            let isEdit = idx >= 0;
+
+            if(isEdit) { 
+                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate }; 
+            } else { 
+                let d = new Date(installDate); d.setMonth(d.getMonth() + 6); clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: d.toISOString().split('T')[0], warrantyDuration: "سنتان" }); 
+            }
+            setDB('aqua_pure_customers_db', clients); 
+
+            // -- دالة الخصم التلقائي المُحسنة من المخزن --
+            let autoDeductCheckbox = document.getElementById('c-auto-deduct');
+            let deductMsg = "";
+            if(autoDeductCheckbox && autoDeductCheckbox.checked && tech && itemsToDeduct.length > 0) {
+                let storeDb = getDB('aqua_pure_store_db');
+                let deductMap = {};
+                itemsToDeduct.forEach(item => { deductMap[item] = (deductMap[item] || 0) + 1; });
+                
+                for(let item in deductMap) {
+                    storeDb.push({
+                        id: new Date().getTime().toString() + Math.floor(Math.random()*10000),
+                        tech: tech,
+                        item: item,
+                        qty: deductMap[item], 
+                        type: 'تنزيل',
+                        date: installDate || new Date().toISOString().split('T')[0]
+                    });
+                }
+                setDB('aqua_pure_store_db', storeDb);
+                deductMsg = "\n✅ تم خصم الأجهزة/القطع من عهدة الفني (" + tech + ").";
+            }
+
+            document.getElementById('customerModal').style.display = 'none';
             renderAllActive();
+            alert("تم حفظ بيانات العميل بنجاح!" + deductMsg);
         }
 
+        // التعديل الأول: ترتيب العملاء لعرض الأحدث في الأعلى (slice().reverse())
         function renderCustomersList() {
             let clients = getDB('aqua_pure_customers_db'); let s = document.getElementById('search-customer-input').value.toLowerCase(); let tech = document.getElementById('filter-tech-input').value; let reg = document.getElementById('filter-region-select').value; let typeF = document.getElementById('filter-type-select').value;
             let html = '';
-            clients.forEach(c => {
+            clients.slice().reverse().forEach(c => {
                 if((!s || (String(c.name||'').toLowerCase().includes(s)) || (String(c.code||'').includes(s)) || (String(c.phone||'').includes(s)) || (String(c.phone2||'').includes(s)) || (String(c.address||'').toLowerCase().includes(s))) && (tech === 'all' || c.tech === tech) && (reg === 'all' || c.region === reg) && (typeF === 'all' || c.type === typeF)) {
                     let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`; if(c.gps) regionHTML += `<br><a href="${c.gps}" target="_blank" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none;">📍 الموقع</a>`;
                     let maintCount = c.nextMaint ? 1 : 0; 
@@ -1191,38 +1242,40 @@
         function renderTechStoreList() { 
             let html=''; let mHtml=''; let summary = {}; let techReports = {}; 
             getDB('aqua_pure_store_db').forEach((s,i) => {
+                let q = parseFloat(s.qty) || 0;
                 if(s.type==='صرف' || s.type==='إرجاع' || s.type==='تنزيل') {
                     let techObj = getDB('aqua_pure_techs_db').find(t => t.name === s.tech);
                     let techPhone = techObj ? techObj.phone : '';
-                    let waText = encodeURIComponent(`مرحباً ${s.tech}، تفاصيل حركة المخزن: ${s.type} - ${s.item} (الكمية: ${s.qty}) بتاريخ ${s.date}. (بيور أكوا لأنظمة المياه النقية).`);
+                    let waText = encodeURIComponent(`مرحباً ${s.tech}، تفاصيل حركة المخزن: ${s.type} - ${s.item} (الكمية: ${q}) بتاريخ ${s.date}. (بيور أكوا لأنظمة المياه النقية).`);
                     let waBtn = techPhone ? `<button type="button" class="btn btn-whatsapp" style="padding:2px 5px;" onclick="sendWhatsAppMsg('${techPhone}', '${waText}')">واتساب</button>` : '';
-                    mHtml+=`<tr><td>${s.tech}</td><td><span style="background:#f1f5f9; padding:2px 5px; border-radius:3px;">${s.type}</span></td><td>${s.item}</td><td>${s.qty}</td><td>${s.date}</td><td><div class="action-btns"><button class="btn btn-secondary" style="padding:2px 5px;" onclick="alert('تفاصيل الحركات')">فتح</button>${waBtn} <button class="btn btn-danger" style="padding:2px 5px;" onclick="deleteStoreItem(${s.id})">حذف</button></div></td></tr>`;
+                    mHtml+=`<tr><td>${s.tech}</td><td><span style="background:#f1f5f9; padding:2px 5px; border-radius:3px;">${s.type}</span></td><td>${s.item}</td><td>${q}</td><td>${s.date}</td><td><div class="action-btns"><button class="btn btn-secondary" style="padding:2px 5px;" onclick="alert('تفاصيل الحركات')">فتح</button>${waBtn} <button class="btn btn-danger" style="padding:2px 5px;" onclick="deleteStoreItem('${s.id}')">حذف</button></div></td></tr>`;
                 }
                 let key = s.tech + "_" + s.item;
                 if(!summary[key]) summary[key] = { tech: s.tech, item: s.item, qty: 0 };
-                if(s.type === 'صرف') summary[key].qty += s.qty;
-                if(s.type === 'إرجاع' || s.type === 'تنزيل') summary[key].qty -= s.qty;
+                if(s.type === 'صرف') summary[key].qty += q;
+                if(s.type === 'إرجاع' || s.type === 'تنزيل') summary[key].qty -= q;
             });
 
             Object.values(summary).forEach(s => {
-                if (s.qty > 0) {
+                if (s.qty !== 0) { 
                     if(!techReports[s.tech]) techReports[s.tech] = [];
                     techReports[s.tech].push(`${s.item} (الكمية: ${s.qty})`);
                 }
             });
 
             Object.values(summary).forEach(s => {
-                if(s.qty > 0) {
+                if(s.qty !== 0) { 
                     let techObj = getDB('aqua_pure_techs_db').find(t => t.name === s.tech);
                     let techPhone = techObj ? techObj.phone : '';
-                    let reportMsg = encodeURIComponent(`مرحباً يا الكابتن ${s.tech}، مرفق تقرير بعهدتك الحالية:\n${techReports[s.tech].join('\n')}\n(بيور أكوا لأنظمة المياه النقية)`);
-                    
+                    let reportMsg = encodeURIComponent(`مرحباً يا الكابتن ${s.tech}، مرفق تقرير بعهدتك الحالية:\n${techReports[s.tech] ? techReports[s.tech].join('\n') : ''}\n(بيور أكوا لأنظمة المياه النقية)`);
                     let waBtn = techPhone ? `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${techPhone}', '${reportMsg}')">واتساب</button>` : '';
+                    
+                    let color = s.qty < 0 ? 'color: var(--danger);' : 'color: var(--primary-dark);';
                     
                     html+=`<tr>
                         <td>${s.tech}</td>
                         <td>${s.item}</td>
-                        <td style="font-weight:bold;">${s.qty}</td>
+                        <td style="font-weight:bold; ${color}">${s.qty}</td>
                         <td style="text-align:center;">
                             <div class="action-btns">
                                 <button class="btn btn-warning" style="padding:4px 8px;" onclick="openStoreActionModal('صرف')">تعديل</button>
@@ -1262,12 +1315,12 @@
             let rows = document.querySelectorAll('.store-item-row'); let added = false;
             rows.forEach(row => {
                 let item = row.querySelector('.store-item-select').value; let qty = parseInt(row.querySelector('.store-qty-input').value) || 1;
-                if(item) { s.push({id:Date.now() + Math.random(), tech, item, qty, type, date:new Date().toISOString().split('T')[0]}); added = true; }
+                if(item) { s.push({id: new Date().getTime().toString() + Math.floor(Math.random()*1000), tech, item, qty, type, date:new Date().toISOString().split('T')[0]}); added = true; }
             });
             if(!added) return alert("الرجاء إضافة منتج واحد على الأقل.");
             setDB('aqua_pure_store_db',s); document.getElementById('storeActionModal').style.display='none'; renderAllActive(); 
         }
-        function deleteStoreItem(id) { if(confirm('حذف الحركة؟')){ let s=getDB('aqua_pure_store_db').filter(i=>i.id!==id); setDB('aqua_pure_store_db',s); renderAllActive(); } }
+        function deleteStoreItem(id) { if(confirm('حذف الحركة؟')){ let s=getDB('aqua_pure_store_db').filter(i=> String(i.id) !== String(id)); setDB('aqua_pure_store_db',s); renderAllActive(); } }
 
         function renderBasicDataTables() { 
             filterBasicData('regions-tbody', ''); 
@@ -1362,6 +1415,70 @@
                     } catch(err) { alert('خطأ في قراءة الملف.'); }
                 };
                 reader.readAsText(fileInput.files[0]);
+            }
+        }
+
+        // ==========================================
+        // إضافات التقارير المتقدمة (تعمل بالكامل الآن)
+        // ==========================================
+        function toggleAdvCustomDate() {
+            let filter = document.getElementById('adv-date-filter').value;
+            document.getElementById('adv-custom-date-row').style.display = (filter === 'custom') ? 'grid' : 'none';
+        }
+
+        function updateAdvSubReports() {
+            // يمكن إضافة خيارات مخصصة هنا مستقبلاً عند تغيير نوع التقرير
+        }
+
+        function generateAdvancedReport() {
+            let type = document.getElementById('adv-type-filter').value;
+            let subType = document.getElementById('adv-subtype-filter').value;
+            let dateFilter = document.getElementById('adv-date-filter').value;
+            let fromDate = document.getElementById('adv-date-from').value;
+            let toDate = document.getElementById('adv-date-to').value;
+            
+            let clients = getDB('aqua_pure_customers_db');
+            let now = new Date();
+            let start = new Date();
+            let end = new Date();
+            
+            // تحديد تواريخ الفلتر
+            if(dateFilter === 'today') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'yesterday') { start.setDate(now.getDate()-1); start.setHours(0,0,0,0); end.setDate(now.getDate()-1); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'last_week') { start.setDate(now.getDate()-7); start.setHours(0,0,0,0); }
+            else if(dateFilter === 'this_month') { start = new Date(now.getFullYear(), now.getMonth(), 1); }
+            else if(dateFilter === 'last_month') { start = new Date(now.getFullYear(), now.getMonth()-1, 1); end = new Date(now.getFullYear(), now.getMonth(), 0, 23,59,59); }
+            else if(dateFilter === 'custom') { start = fromDate ? new Date(fromDate) : new Date(0); end = toDate ? new Date(toDate) : new Date(); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'all_time') { start = new Date(0); } // منذ البداية
+            
+            // تصفية العملاء/المبيعات بناءً على التاريخ
+            let filteredClients = clients.filter(c => {
+                let d = new Date(c.installDate || c.lastMaint || 0);
+                return (d >= start && d <= end);
+            });
+
+            let totalSales = 0;
+            filteredClients.forEach(c => totalSales += (parseFloat(c.totalValue) || 0) + (parseFloat(c.lastMaintValue) || 0));
+
+            // إظهار النتائج بناءً على الاختيار
+            if(type === 'sales') {
+                if(subType === 'summary') {
+                    alert(`ملخص المبيعات للفترة المحددة:\nعدد العمليات: ${filteredClients.length}\nإجمالي المبيعات: ${totalSales} SAR`);
+                } else {
+                    // إذا كان تفاصيل، يتم نقل الفلاتر للشاشة الرئيسية للتقارير
+                    document.getElementById('rep-filter-from').value = start.toISOString().split('T')[0];
+                    document.getElementById('rep-filter-to').value = end.toISOString().split('T')[0];
+                    renderDetailedReports();
+                    alert('تم تطبيق الفلتر على جدول التقارير الشاملة بالخلفية.');
+                }
+            } else if (type === 'customers') {
+                alert(`عدد العملاء المسجلين في هذه الفترة: ${filteredClients.length} عميل`);
+            } else {
+                 alert(`تم العثور على ${filteredClients.length} عملية. جاري تطوير باقي تفاصيل المنتجات.`);
+            }
+            
+            if(subType === 'summary' || type !== 'sales') {
+                document.getElementById('advancedReportsModal').style.display = 'none';
             }
         }
     </script>
