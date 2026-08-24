@@ -106,6 +106,7 @@
                 <li data-target="basic-data" onclick="switchTab('basic-data', this)">⚙️ <span>البيانات الأساسية</span></li>
                 <li data-target="warranty-cards" onclick="switchTab('warranty-cards', this)">🛡️ <span>كروت الضمان</span></li>
                 <li data-target="qr-invoices" onclick="switchTab('qr-invoices', this)">📱 <span>فواتير QR</span></li>
+                <li data-target="quotations" onclick="switchTab('quotations', this)">📜 <span>عروض الأسعار</span></li>
                 <li data-target="reports" onclick="switchTab('reports', this)">📈 <span>التقارير الشاملة</span></li>
                 <li data-target="users-permissions" onclick="switchTab('users-permissions', this)">🔑 <span>المستخدمون والصلاحيات</span></li>
                 <li data-target="system-settings" onclick="switchTab('system-settings', this)">🛠️ <span>الإعدادات الأساسية</span></li>
@@ -337,7 +338,26 @@
                     </div>
                 </div>
 
-                <!-- 10. التقارير الشاملة -->
+                <!-- 10. عروض الأسعار -->
+                <div id="quotations" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h2 style="font-size: 1.4rem; color: var(--primary-dark);">📜 عروض الأسعار</h2>
+                        <button class="btn btn-success" onclick="openQuoteModal()">+ إضافة عرض سعر</button>
+                    </div>
+                    <div class="card" style="padding: 15px; margin-bottom: 20px;">
+                        <input type="text" id="search-quotes-input" class="form-control" placeholder="🔍 بحث عن عرض سعر (بالاسم أو الكود أو الجوال)..." oninput="renderQuotesList()" style="max-width: 350px; margin-bottom:0;">
+                    </div>
+                    <div class="card" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>الكود</th><th>العميل/الشركة</th><th>الجوال</th><th>الأجهزة والخدمات</th><th>الإجمالي (SAR)</th><th>التاريخ</th><th style="text-align:center;">إجراءات</th></tr></thead>
+                                <tbody id="quotes-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. التقارير الشاملة -->
                 <div id="reports" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">📈 التقارير الشاملة</h2>
@@ -389,7 +409,7 @@
                     </div>
                 </div>
 
-                <!-- 11. المستخدمون -->
+                <!-- 12. المستخدمون -->
                 <div id="users-permissions" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">🔑 المستخدمون والصلاحيات</h2>
@@ -409,7 +429,7 @@
                     </div>
                 </div>
 
-                <!-- 12. الإعدادات -->
+                <!-- 13. الإعدادات -->
                 <div id="system-settings" class="tab-content">
                     <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 20px;">🛠️ بيانات الشركة وإعدادات الفاتورة</h2>
                     <div class="card">
@@ -437,7 +457,7 @@
                     </div>
                 </div>
 
-                <!-- 13. النسخة الاحتياطية -->
+                <!-- 14. النسخة الاحتياطية -->
                 <div id="backup-restore" class="tab-content">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
@@ -484,6 +504,7 @@
     </div>
 
     <!-- Modals -->
+    <!-- Modal: العميل -->
     <div id="customerModal" class="modal">
         <div class="modal-content">
             <h3 id="customer-modal-title" style="margin-bottom: 15px; color: var(--primary-dark);">إضافة</h3>
@@ -507,9 +528,13 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
                     <div><label>رابط الموقع (GPS)</label><input type="url" id="c-gps" class="form-control" placeholder="https://maps.google.com/..."></div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+                
+                <!-- التعديل هنا: إضافة المنسق والمندوب -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 15px;">
                     <div><label>المنطقة</label><select id="c-region" class="form-control"></select></div>
                     <div><label>الفني</label><select id="c-tech" class="form-control"></select></div>
+                    <div><label>المنسق</label><select id="c-coordinator" class="form-control"></select></div>
+                    <div><label>المندوب</label><select id="c-delegate" class="form-control"></select></div>
                 </div>
                 
                 <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
@@ -521,7 +546,6 @@
                     </div>
                 </div>
 
-                <!-- زر الخصم التلقائي للمخزن -->
                 <div style="margin-bottom: 15px; background: #fffbeb; padding: 10px; border-radius: 6px; border: 1px dashed #f59e0b; display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="c-auto-deduct" checked style="width: 18px; height: 18px; cursor: pointer;">
                     <label for="c-auto-deduct" style="font-weight: bold; color: var(--warning); margin: 0; cursor: pointer;">خصم هذه الأجهزة/القطع من عهدة الفني المختار تلقائياً (تنزيل)</label>
@@ -549,6 +573,13 @@
                 <input type="hidden" id="maint-target-code">
                 <div style="margin-bottom: 12px;"><label>تاريخ صيانة اليوم</label><input type="date" id="c-last-maint" class="form-control" onchange="autoCalculateNextMaintenance(this.value)" required></div>
                 <div style="margin-bottom: 12px;"><label>الفني المنفذ للصيانة</label><select id="c-maint-tech" class="form-control maint-tech-select"></select></div>
+                
+                <!-- التعديل هنا: إضافة المنسق والمندوب للصيانة -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                    <div><label>المنسق</label><select id="c-maint-coordinator" class="form-control"></select></div>
+                    <div><label>المندوب</label><select id="c-maint-delegate" class="form-control"></select></div>
+                </div>
+
                 <div style="margin-bottom: 12px;"><label>تحديث رابط الموقع (GPS) - اختياري</label><input type="url" id="c-maint-gps" class="form-control" placeholder="تحديث رابط خرائط جوجل"></div>
                 <div style="margin-bottom: 12px;"><label>قيمة الصيانة المُحصلة (SAR)</label><input type="number" step="0.01" id="c-maint-value" class="form-control" placeholder="المبلغ المحصل"></div>
                 <div style="margin-bottom: 15px;"><label style="color: var(--primary-dark);">موعد الصيانة القادم</label><input type="date" id="c-next-maint" class="form-control" readonly></div>
@@ -561,6 +592,39 @@
                         <button type="button" class="btn btn-secondary" onclick="document.getElementById('maintenanceModal').style.display='none'">إلغاء</button>
                         <button type="submit" class="btn btn-success">حفظ</button>
                     </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: عروض الأسعار -->
+    <div id="quoteModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary-dark);">📜 عرض سعر</h3>
+            <form onsubmit="saveQuote(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div><label>رقم العرض (الكود)</label><input type="text" id="q-code" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
+                    <div><label>التاريخ</label><input type="date" id="q-date" class="form-control" required></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div><label>اسم العميل / الشركة</label><input type="text" id="q-name" class="form-control" required></div>
+                    <div><label>الجوال</label><input type="text" id="q-phone" class="form-control" required></div>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                    <h4 style="font-size: 0.95rem; color: var(--primary-dark); margin-bottom: 10px;">💧 الأجهزة / الخدمات المشمولة</h4>
+                    <div id="quote-devices-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 5px;">
+                        <button type="button" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="addQuoteDeviceRow()">+ إضافة جهاز/خدمة</button>
+                        <div style="font-weight: bold; color: var(--primary-dark); background: #e0f2fe; padding: 5px 15px; border-radius: 5px;">الإجمالي: <span id="quote-total-price">0</span> SAR</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>ملاحظات (تظهر للعميل في العرض)</label><textarea id="q-notes" class="form-control" rows="2" placeholder="شروط الدفع، مدة التوريد، والضمان..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('quoteModal').style.display='none'">إلغاء</button>
+                    <button type="submit" class="btn btn-success">حفظ العرض</button>
                 </div>
             </form>
         </div>
@@ -583,55 +647,12 @@
         </div>
     </div>
 
-    <div id="warrantyModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h3 style="margin-bottom:15px; color:var(--primary-dark);">⚙️ إعدادات الضمان</h3>
-            <form onsubmit="saveWarrantySettings(event)">
-                <input type="hidden" id="w-target-code">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div><label>العميل</label><input type="text" id="w-name-input" class="form-control" required></div>
-                    <div><label>الجوال</label><input type="text" id="w-phone-input" class="form-control" required></div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div><label>المنطقة</label><select id="w-region-input" class="form-control w-dynamic-region"></select></div>
-                    <div><label>مدة الضمان</label><input type="text" id="w-duration-input" class="form-control" required></div>
-                </div>
-                <div style="margin-bottom:12px;"><label>رابط الموقع (GPS)</label><input type="url" id="w-gps-input" class="form-control"></div>
-                
-                <div style="margin-bottom:15px; background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1;">
-                    <label style="color:var(--primary-dark); font-weight:bold;">الأجهزة و أسباب الصيانة المشمولة</label>
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <select class="form-control dynamic-devices-select" id="w-add-device" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة جهاز</option></select>
-                        <select class="form-control dynamic-reasons-select" id="w-add-reason" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة سبب/قطعة</option></select>
-                    </div>
-                    <input type="text" id="w-devices-input" class="form-control" required placeholder="ستظهر هنا العناصر التي قمت باختيارها...">
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:10px;">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('warrantyModal').style.display='none'">إلغاء</button>
-                    <button type="submit" class="btn btn-success">حفظ الإعدادات</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
+    <!-- Modals الإعدادات الأخرى -->
+    <div id="warrantyModal" class="modal"><div class="modal-content" style="max-width: 500px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">⚙️ إعدادات الضمان</h3><form onsubmit="saveWarrantySettings(event)"><input type="hidden" id="w-target-code"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;"><div><label>العميل</label><input type="text" id="w-name-input" class="form-control" required></div><div><label>الجوال</label><input type="text" id="w-phone-input" class="form-control" required></div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;"><div><label>المنطقة</label><select id="w-region-input" class="form-control w-dynamic-region"></select></div><div><label>مدة الضمان</label><input type="text" id="w-duration-input" class="form-control" required></div></div><div style="margin-bottom:12px;"><label>رابط الموقع (GPS)</label><input type="url" id="w-gps-input" class="form-control"></div><div style="margin-bottom:15px; background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1;"><label style="color:var(--primary-dark); font-weight:bold;">الأجهزة و أسباب الصيانة المشمولة</label><div style="display:flex; gap:10px; margin-bottom:10px;"><select class="form-control dynamic-devices-select" id="w-add-device" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة جهاز</option></select><select class="form-control dynamic-reasons-select" id="w-add-reason" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة سبب/قطعة</option></select></div><input type="text" id="w-devices-input" class="form-control" required placeholder="ستظهر هنا العناصر التي قمت باختيارها..."></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('warrantyModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ الإعدادات</button></div></form></div></div>
     <div id="basicModal" class="modal"><div class="modal-content" style="max-width: 400px;"><h3 id="basic-modal-title" style="margin-bottom:15px; color:var(--primary-dark);">إضافة</h3><form onsubmit="saveBasicItem(event)"><input type="hidden" id="basic-item-type"><div style="margin-bottom:15px;"><label id="basic-label-name"></label><input type="text" id="basic-input-name" class="form-control" required></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('basicModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
-    
-    <div id="userModal" class="modal"><div class="modal-content"><h3 style="margin-bottom:15px; color:var(--primary-dark);">🔑 المستخدمون</h3><form onsubmit="saveUser(event)"><input type="hidden" id="u-edit-index"><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:15px;"><div><label>الاسم</label><input type="text" id="u-username" class="form-control" required></div><div><label>المرور</label><input type="text" id="u-password" class="form-control" required></div><div><label>الحالة</label><select id="u-status" class="form-control"><option value="active">نشط</option><option value="inactive">غير نشط</option></select></div></div><div class="permissions-grid"><label><input type="checkbox" class="u-perm" value="الرئيسية" checked disabled> الرئيسية</label><label><input type="checkbox" class="u-perm" value="العملاء والموردون"> العملاء والموردون</label><label><input type="checkbox" class="u-perm" value="بطاقات الصيانات"> بطاقات الصيانات</label><label><input type="checkbox" class="u-perm" value="تذكير الصيانات"> تذكير الصيانات</label><label><input type="checkbox" class="u-perm" value="إدارة الفنيين"> إدارة الفنيين</label><label><input type="checkbox" class="u-perm" value="مخزن الفنيين"> مخزن الفنيين</label><label><input type="checkbox" class="u-perm" value="البيانات الأساسية"> البيانات الأساسية</label><label><input type="checkbox" class="u-perm" value="كروت الضمان"> كروت الضمان</label><label><input type="checkbox" class="u-perm" value="فواتير QR"> فواتير QR</label><label><input type="checkbox" class="u-perm" value="التقارير الشاملة"> التقارير الشاملة</label><label><input type="checkbox" class="u-perm" value="الإعدادات الأساسية"> الإعدادات الأساسية</label><label><input type="checkbox" class="u-perm" value="النسخة الاحتياطية"> النسخة الاحتياطية</label><label><input type="checkbox" class="u-perm" value="المستخدمون والصلاحيات"> المستخدمون والصلاحيات</label></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
-    
+    <div id="userModal" class="modal"><div class="modal-content"><h3 style="margin-bottom:15px; color:var(--primary-dark);">🔑 المستخدمون</h3><form onsubmit="saveUser(event)"><input type="hidden" id="u-edit-index"><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:15px;"><div><label>الاسم</label><input type="text" id="u-username" class="form-control" required></div><div><label>المرور</label><input type="text" id="u-password" class="form-control" required></div><div><label>الحالة</label><select id="u-status" class="form-control"><option value="active">نشط</option><option value="inactive">غير نشط</option></select></div></div><div class="permissions-grid"><label><input type="checkbox" class="u-perm" value="الرئيسية" checked disabled> الرئيسية</label><label><input type="checkbox" class="u-perm" value="العملاء والموردون"> العملاء والموردون</label><label><input type="checkbox" class="u-perm" value="بطاقات الصيانات"> بطاقات الصيانات</label><label><input type="checkbox" class="u-perm" value="تذكير الصيانات"> تذكير الصيانات</label><label><input type="checkbox" class="u-perm" value="إدارة الفنيين"> إدارة الفنيين</label><label><input type="checkbox" class="u-perm" value="مخزن الفنيين"> مخزن الفنيين</label><label><input type="checkbox" class="u-perm" value="البيانات الأساسية"> البيانات الأساسية</label><label><input type="checkbox" class="u-perm" value="كروت الضمان"> كروت الضمان</label><label><input type="checkbox" class="u-perm" value="فواتير QR"> فواتير QR</label><label><input type="checkbox" class="u-perm" value="عروض الأسعار"> عروض الأسعار</label><label><input type="checkbox" class="u-perm" value="التقارير الشاملة"> التقارير الشاملة</label><label><input type="checkbox" class="u-perm" value="الإعدادات الأساسية"> الإعدادات الأساسية</label><label><input type="checkbox" class="u-perm" value="النسخة الاحتياطية"> النسخة الاحتياطية</label><label><input type="checkbox" class="u-perm" value="المستخدمون والصلاحيات"> المستخدمون والصلاحيات</label></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
     <div id="technicianModal" class="modal"><div class="modal-content" style="max-width: 450px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">👷 الفني</h3><form onsubmit="saveTechnician(event)"><input type="hidden" id="tech-edit-index"><div style="margin-bottom:12px;"><label>الاسم</label><input type="text" id="tech-name-input" class="form-control" required></div><div style="margin-bottom:12px;"><label>الجوال</label><input type="text" id="tech-phone-input" class="form-control"></div><div style="margin-bottom:15px;"><label>الحالة</label><select id="tech-status-input" class="form-control"><option value="نشط">نشط</option><option value="غير نشط">غير نشط</option></select></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('technicianModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
-    
-    <div id="storeActionModal" class="modal"><div class="modal-content" style="max-width: 550px;"><h3 id="store-modal-title" style="margin-bottom:15px; color:var(--primary-dark);">حركة المخزن</h3><form onsubmit="saveStoreAction(event)"><input type="hidden" id="store-action-type">
-        <div style="margin-bottom:12px;"><label>الفني</label><select id="store-tech-name" class="form-control" required></select></div>
-        <div style="background:#f1f5f9; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #cbd5e1;">
-            <label style="color:var(--primary-dark); font-weight:bold; margin-bottom:10px; display:block;">المنتجات أو القطع المستهدفة والكميات</label>
-            <div id="store-items-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;"></div>
-            <div style="display:flex; gap:10px;">
-                <button type="button" class="btn btn-secondary" onclick="addStoreItemRow()">+ إضافة منتج/قطعة أخرى</button>
-            </div>
-        </div>
-        <div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('storeActionModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ العملية</button></div></form></div></div>
-    
+    <div id="storeActionModal" class="modal"><div class="modal-content" style="max-width: 550px;"><h3 id="store-modal-title" style="margin-bottom:15px; color:var(--primary-dark);">حركة المخزن</h3><form onsubmit="saveStoreAction(event)"><input type="hidden" id="store-action-type"><div style="margin-bottom:12px;"><label>الفني</label><select id="store-tech-name" class="form-control" required></select></div><div style="background:#f1f5f9; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #cbd5e1;"><label style="color:var(--primary-dark); font-weight:bold; margin-bottom:10px; display:block;">المنتجات أو القطع المستهدفة والكميات</label><div id="store-items-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;"></div><div style="display:flex; gap:10px;"><button type="button" class="btn btn-secondary" onclick="addStoreItemRow()">+ إضافة منتج/قطعة أخرى</button></div></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('storeActionModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ العملية</button></div></form></div></div>
     <div id="techMovementsModal" class="modal"><div class="modal-content" style="max-width: 700px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">📦 سجل الحركات</h3><div class="table-responsive" style="margin-bottom:15px;"><table><thead><tr><th>الفني</th><th>النوع</th><th>المنتج/السبب</th><th>الكمية</th><th>التاريخ</th><th style="text-align:center;">إجراءات</th></tr></thead><tbody id="tech-movements-tbody"></tbody></table></div><div style="display:flex; justify-content:flex-end;"><button class="btn btn-secondary" onclick="document.getElementById('techMovementsModal').style.display='none'">إغلاق</button></div></div></div>
 
     <script>
@@ -664,7 +685,8 @@
             'aqua_pure_reasons_db': 'reasons',
             'aqua_pure_delegates_db': 'delegates',
             'aqua_pure_coordinators_db': 'coordinators',
-            'aqua_pure_sys_settings_db': 'sysSettings'
+            'aqua_pure_sys_settings_db': 'sysSettings',
+            'aqua_pure_quotes_db': 'quotes' // إضافة عروض الأسعار للفايربيس
         };
 
         // ==========================================
@@ -714,6 +736,7 @@
                 if(tabId === 'basic-data') renderBasicDataTables();
                 if(tabId === 'warranty-cards') renderWarrantyList();
                 if(tabId === 'qr-invoices') renderInvoicesList();
+                if(tabId === 'quotations') renderQuotesList();
                 if(tabId === 'reports') loadReportsData();
                 if(tabId === 'users-permissions') renderUsersList();
             }
@@ -763,8 +786,9 @@
         
         let localCust = getDB('aqua_pure_customers_db'); if(localCust.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_customers_db')))) setDB('aqua_pure_customers_db', []);
         let localStore = getDB('aqua_pure_store_db'); if(localStore.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_store_db')))) setDB('aqua_pure_store_db', []);
+        let localQuotes = getDB('aqua_pure_quotes_db'); if(localQuotes.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_quotes_db')))) setDB('aqua_pure_quotes_db', []);
         
-        let defaultPerms = ["الرئيسية", "العملاء والموردون", "بطاقات الصيانات", "تذكير الصيانات", "إدارة الفنيين", "مخزن الفنيين", "البيانات الأساسية", "كروت الضمان", "فواتير QR", "التقارير الشاملة", "الإعدادات الأساسية", "النسخة الاحتياطية", "المستخدمون والصلاحيات"];
+        let defaultPerms = ["الرئيسية", "العملاء والموردون", "بطاقات الصيانات", "تذكير الصيانات", "إدارة الفنيين", "مخزن الفنيين", "البيانات الأساسية", "كروت الضمان", "فواتير QR", "عروض الأسعار", "التقارير الشاملة", "الإعدادات الأساسية", "النسخة الاحتياطية", "المستخدمون والصلاحيات"];
         if(getDB('aqua_pure_users_db').length === 0) setDB('aqua_pure_users_db', [{ user: "Admin", pass: "1234", perms: defaultPerms, status: "active" }]);
         
         let sysSettings = JSON.parse(localStorage.getItem('aqua_pure_sys_settings_db'));
@@ -881,16 +905,26 @@
 
         function populateDynamicDropdowns() {
             let regions = getDB('aqua_pure_regions_db'); let techs = getDB('aqua_pure_techs_db'); let devices = getDB('aqua_pure_devices_db'); let reasons = getDB('aqua_pure_reasons_db');
+            let coords = getDB('aqua_pure_coordinators_db'); let delegs = getDB('aqua_pure_delegates_db');
+            
             let regOpts = regions.map(r => `<option value="${r}">${r}</option>`).join('');
             let techOpts = techs.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
             let devOpts = devices.map(d => `<option value="${d}">${d}</option>`).join('');
             let reasonOpts = reasons.map(r => `<option value="${r}">${r}</option>`).join('');
+            let coordOpts = '<option value="">-- اختياري --</option>' + coords.map(c => `<option value="${c}">${c}</option>`).join('');
+            let delegOpts = '<option value="">-- اختياري --</option>' + delegs.map(d => `<option value="${d}">${d}</option>`).join('');
             
             ['c-region', 'filter-region-select', 'maint-filter-region', 'filter-rem-region', 'rep-filter-region'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = (id.includes('filter') ? `<option value="all">كل المناطق</option>` : '') + regOpts; });
             document.querySelectorAll('.w-dynamic-region').forEach(sel => { sel.innerHTML = regOpts; });
             ['c-tech', 'filter-tech-input', 'maint-filter-tech', 'filter-rem-tech', 'rep-filter-tech', 'store-tech-name', 'c-maint-tech'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = (id.includes('filter') ? `<option value="all">كل الفنيين</option>` : '') + techOpts; });
             document.querySelectorAll('.dynamic-devices-select').forEach(sel => { sel.innerHTML = (sel.id.includes('add') || sel.id.includes('store') ? '<option value="">-- اختر جهاز --</option>' : '') + devOpts; });
             document.querySelectorAll('.dynamic-reasons-select').forEach(sel => { sel.innerHTML = (sel.id.includes('add') || sel.id.includes('store') ? '<option value="">-- أو اختر سبب/قطعة --</option>' : '') + reasonOpts; });
+            
+            // المنسقين والمندوبين
+            if(document.getElementById('c-coordinator')) document.getElementById('c-coordinator').innerHTML = coordOpts;
+            if(document.getElementById('c-maint-coordinator')) document.getElementById('c-maint-coordinator').innerHTML = coordOpts;
+            if(document.getElementById('c-delegate')) document.getElementById('c-delegate').innerHTML = delegOpts;
+            if(document.getElementById('c-maint-delegate')) document.getElementById('c-maint-delegate').innerHTML = delegOpts;
         }
 
         let chartInstance = null;
@@ -934,6 +968,8 @@
             document.getElementById('c-code').value = getNextCustomerCode();
             ['c-name','c-tax-number','c-phone','c-phone2','c-address','c-national-address','c-gps','c-notes'].forEach(id => { let el = document.getElementById(id); if(el) el.value = ''; });
             document.getElementById('c-type').value = 'عميل'; document.getElementById('c-install-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('c-coordinator').value = '';
+            document.getElementById('c-delegate').value = '';
             document.getElementById('customer-devices-container').innerHTML = ''; document.getElementById('cust-total-price').innerText = "0";
             
             if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = true;
@@ -944,7 +980,7 @@
         function openEditCustomer(code) {
             currentModalMode = 'edit'; populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(x => String(x.code) === String(code));
             if(c) {
-                document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-notes').value = c.notes || ''; document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
+                document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-coordinator').value = c.coordinator || ''; document.getElementById('c-delegate').value = c.delegate || ''; document.getElementById('c-notes').value = c.notes || ''; document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
                 let container = document.getElementById('customer-devices-container'); container.innerHTML = ''; let devicesArr = c.devicesSummary ? c.devicesSummary.split('، ') : [];
                 
                 if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = false;
@@ -974,7 +1010,7 @@
 
         function saveCustomerAndMaintenance(e) {
             e.preventDefault();
-            let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let notes = document.getElementById('c-notes').value.trim(); let installDate = document.getElementById('c-install-date').value;
+            let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); let installDate = document.getElementById('c-install-date').value;
             
             let devicesSummaryArr = [], totalValue = 0, itemsToDeduct = []; 
             document.querySelectorAll('.cust-device-row').forEach(row => { 
@@ -989,9 +1025,9 @@
             let isEdit = idx >= 0;
 
             if(isEdit) { 
-                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate }; 
+                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate }; 
             } else { 
-                let d = new Date(installDate); d.setMonth(d.getMonth() + 6); clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: d.toISOString().split('T')[0], warrantyDuration: "سنتان" }); 
+                let d = new Date(installDate); d.setMonth(d.getMonth() + 6); clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: d.toISOString().split('T')[0], warrantyDuration: "سنتان" }); 
             }
             setDB('aqua_pure_customers_db', clients); 
 
@@ -1054,9 +1090,9 @@
             document.getElementById('maintenance-cards-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بطاقات صيانة</td></tr>';
         }
 
-        function openMaintenanceCardByCode(code) { populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(c) { document.getElementById('maint-target-code').value = c.code; document.getElementById('c-last-maint').value = c.lastMaint || new Date().toISOString().split('T')[0]; document.getElementById('c-maint-value').value = c.lastMaintValue || ''; document.getElementById('c-maint-tech').value = c.tech || ''; document.getElementById('c-maint-gps').value = c.gps || ''; autoCalculateNextMaintenance(document.getElementById('c-last-maint').value); document.getElementById('maintenanceModal').style.display = 'flex'; } }
+        function openMaintenanceCardByCode(code) { populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(c) { document.getElementById('maint-target-code').value = c.code; document.getElementById('c-last-maint').value = c.lastMaint || new Date().toISOString().split('T')[0]; document.getElementById('c-maint-value').value = c.lastMaintValue || ''; document.getElementById('c-maint-tech').value = c.tech || ''; document.getElementById('c-maint-coordinator').value = c.coordinator || ''; document.getElementById('c-maint-delegate').value = c.delegate || ''; document.getElementById('c-maint-gps').value = c.gps || ''; autoCalculateNextMaintenance(document.getElementById('c-last-maint').value); document.getElementById('maintenanceModal').style.display = 'flex'; } }
         function autoCalculateNextMaintenance(val) { if(!val) return; let d = new Date(val); d.setMonth(d.getMonth() + 6); document.getElementById('c-next-maint').value = d.toISOString().split('T')[0]; }
-        function saveMaintenanceDateFinal(e) { e.preventDefault(); let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.lastMaint = document.getElementById('c-last-maint').value; c.lastMaintValue = document.getElementById('c-maint-value').value || 0; c.nextMaint = document.getElementById('c-next-maint').value; c.tech = document.getElementById('c-maint-tech').value; if(document.getElementById('c-maint-gps').value) c.gps = document.getElementById('c-maint-gps').value; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); }
+        function saveMaintenanceDateFinal(e) { e.preventDefault(); let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.lastMaint = document.getElementById('c-last-maint').value; c.lastMaintValue = document.getElementById('c-maint-value').value || 0; c.nextMaint = document.getElementById('c-next-maint').value; c.tech = document.getElementById('c-maint-tech').value; c.coordinator = document.getElementById('c-maint-coordinator').value; c.delegate = document.getElementById('c-maint-delegate').value; if(document.getElementById('c-maint-gps').value) c.gps = document.getElementById('c-maint-gps').value; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); }
         function cancelMaintenance() { if(confirm('إيقاف الصيانة نهائياً؟')) { let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.nextMaint = ""; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); } }
         function resetMaintenance() { if(confirm('تصفير صيانات العميل؟')) { let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.nextMaint = ""; c.lastMaintValue = 0; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); } }
 
@@ -1121,6 +1157,184 @@
             let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية';
             let win = window.open('', '_blank');
             win.document.write(`<html lang="ar" dir="rtl"><head><title>${titleText}</title><style>body{font-family:'Cairo',sans-serif; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ccc; padding:8px; text-align:right;} th:first-child, td:first-child {display:none;} th:last-child, td:last-child {display:none;}</style></head><body><h2 style="text-align:center;">${cName} - ${titleText}</h2>${tableHTML}<script>window.onload=function(){window.print();}<\/script></body></html>`);
+            win.document.close();
+        }
+
+        // ==========================================
+        // إضافة عروض الأسعار (Quotations)
+        // ==========================================
+        function getNextQuoteCode() { let quotes = getDB('aqua_pure_quotes_db'); let maxCode = 1000; quotes.forEach(q => { let n = parseInt(q.code); if(!isNaN(n) && n > maxCode) maxCode = n; }); return (maxCode + 1).toString(); }
+
+        function openQuoteModal(code = null) {
+            populateDynamicDropdowns();
+            let qDate = document.getElementById('q-date');
+            qDate.value = new Date().toISOString().split('T')[0];
+            
+            let container = document.getElementById('quote-devices-container');
+            container.innerHTML = '';
+            
+            if(code) {
+                let q = getDB('aqua_pure_quotes_db').find(x => String(x.code) === String(code));
+                if(q) {
+                    document.getElementById('q-code').value = q.code;
+                    document.getElementById('q-name').value = q.name || '';
+                    document.getElementById('q-phone').value = q.phone || '';
+                    document.getElementById('q-notes').value = q.notes || '';
+                    qDate.value = q.date || qDate.value;
+                    
+                    let devicesArr = q.devicesSummary ? q.devicesSummary.split('، ') : [];
+                    if(devicesArr.length === 0) addQuoteDeviceRow();
+                    devicesArr.forEach(devStr => {
+                        let match = devStr.match(/(.*?)\s*\(([\d.]+)\s*SAR\)/); let devName = match ? match[1].trim() : devStr.trim(); let devPrice = match ? match[2] : 0;
+                        let list = [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])]; if(!list.includes(devName) && devName) list.push(devName);
+                        let devOpts = list.map(d => `<option value="${d}" ${d===devName?'selected':''}>${d}</option>`).join('');
+                        let row = document.createElement('div'); row.className = 'quote-device-row'; row.style.cssText = 'display:flex; gap:8px; margin-top:5px;';
+                        row.innerHTML = `<select class="form-control quote-dev-type" required style="flex:2; margin-bottom:0;">${devOpts}</select><input type="number" step="0.01" class="form-control quote-dev-price" value="${devPrice}" required style="flex:1; margin-bottom:0;" oninput="calculateQuoteTotal()"><button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); calculateQuoteTotal();">✖</button>`;
+                        container.appendChild(row);
+                    });
+                }
+            } else {
+                document.getElementById('q-code').value = getNextQuoteCode();
+                document.getElementById('q-name').value = '';
+                document.getElementById('q-phone').value = '';
+                document.getElementById('q-notes').value = 'الأسعار تشمل التوريد والتركيب والضمان حسب المتفق عليه.';
+                addQuoteDeviceRow();
+            }
+            calculateQuoteTotal();
+            document.getElementById('quoteModal').style.display = 'flex';
+        }
+
+        function addQuoteDeviceRow() {
+            let list = [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])];
+            if(list.length===0) list=["عنصر عام"]; 
+            let devOpts = list.map(d => `<option value="${d}">${d}</option>`).join('');
+            let row = document.createElement('div'); row.className = 'quote-device-row'; row.style.cssText = 'display:flex; gap:8px; margin-top:5px;';
+            row.innerHTML = `<select class="form-control quote-dev-type" required style="flex:2; margin-bottom:0;">${devOpts}</select><input type="number" step="0.01" class="form-control quote-dev-price" placeholder="السعر" required style="flex:1; margin-bottom:0;" oninput="calculateQuoteTotal()"><button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); calculateQuoteTotal();">✖</button>`;
+            document.getElementById('quote-devices-container').appendChild(row); calculateQuoteTotal();
+        }
+
+        function calculateQuoteTotal() { let t = 0; document.querySelectorAll('.quote-dev-price').forEach(i => t += parseFloat(i.value)||0); if(document.getElementById('quote-total-price')) document.getElementById('quote-total-price').innerText = t; }
+
+        function saveQuote(e) {
+            e.preventDefault();
+            let code = document.getElementById('q-code').value;
+            let name = document.getElementById('q-name').value.trim();
+            let phone = document.getElementById('q-phone').value.trim();
+            let date = document.getElementById('q-date').value;
+            let notes = document.getElementById('q-notes').value.trim();
+            
+            let devicesSummaryArr = [], totalValue = 0; 
+            document.querySelectorAll('.quote-device-row').forEach(row => { 
+                let p = parseFloat(row.querySelector('.quote-dev-price').value) || 0; 
+                let itemName = row.querySelector('.quote-dev-type').value;
+                totalValue += p; 
+                devicesSummaryArr.push(`${itemName} (${p} SAR)`); 
+            });
+            let devicesSummary = devicesSummaryArr.join('، '); 
+            
+            let quotes = getDB('aqua_pure_quotes_db'); 
+            let idx = quotes.findIndex(i => String(i.code) === String(code));
+            
+            if(idx >= 0) {
+                quotes[idx] = { ...quotes[idx], name, phone, date, notes, devicesSummary, totalValue }; 
+            } else {
+                quotes.push({ code, name, phone, date, notes, devicesSummary, totalValue }); 
+            }
+            
+            setDB('aqua_pure_quotes_db', quotes);
+            document.getElementById('quoteModal').style.display = 'none';
+            renderQuotesList();
+            alert("تم حفظ عرض السعر بنجاح!");
+        }
+
+        function renderQuotesList() {
+            let quotes = getDB('aqua_pure_quotes_db');
+            let searchVal = document.getElementById('search-quotes-input') ? document.getElementById('search-quotes-input').value.toLowerCase() : '';
+            let html = '';
+            quotes.slice().reverse().forEach(q => {
+                if(!searchVal || (String(q.name||'').toLowerCase().includes(searchVal)) || (String(q.code||'').includes(searchVal)) || (String(q.phone||'').includes(searchVal))) {
+                    let waText = encodeURIComponent(`مرحباً ${q.name}،\nمرفق لسيادتكم تفاصيل عرض السعر المطلوب بقيمة إجمالية ${q.totalValue || 0} SAR.\n\nالأجهزة والخدمات: ${q.devicesSummary}\n\nنتشرف بخدمتكم في بيور أكوا لأنظمة المياه النقية.`);
+                    let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${q.phone}', '${waText}')">واتساب</button>`;
+                    html += `<tr>
+                        <td>${q.code}</td>
+                        <td><strong>${q.name}</strong></td>
+                        <td>${q.phone}</td>
+                        <td>${q.devicesSummary}</td>
+                        <td style="color:var(--success); font-weight:bold;">${q.totalValue}</td>
+                        <td>${q.date}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-warning" onclick="openQuoteModal('${q.code}')">تعديل</button>
+                                <button class="btn btn-success" onclick="printQuote('${q.code}')">طباعة</button>
+                                ${waBtn}
+                                <button class="btn btn-danger" onclick="deleteQuote('${q.code}')">حذف</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }
+            });
+            let tbody = document.getElementById('quotes-table-body');
+            if(tbody) tbody.innerHTML = html || `<tr><td colspan="7" style="text-align: center;">لا توجد عروض أسعار مسجلة.</td></tr>`;
+        }
+
+        function deleteQuote(code) {
+            if(confirm('هل أنت متأكد من حذف عرض السعر؟')) {
+                let quotes = getDB('aqua_pure_quotes_db').filter(q => String(q.code) !== String(code));
+                setDB('aqua_pure_quotes_db', quotes);
+                renderQuotesList();
+            }
+        }
+
+        function printQuote(code) {
+            let q = getDB('aqua_pure_quotes_db').find(i => String(i.code) === String(code)); if(!q) return;
+            let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية'; 
+            let cPhone = sysSettings.phone1 || ''; 
+            let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; 
+            let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; 
+            let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; 
+            let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; margin-bottom:10px; border-radius:5px;">` : ''; 
+            
+            let devicesHTML = '';
+            let devicesArr = q.devicesSummary ? q.devicesSummary.split('، ') : [];
+            devicesArr.forEach(devStr => {
+                let match = devStr.match(/(.*?)\s*\(([\d.]+)\s*SAR\)/);
+                if(match) {
+                    devicesHTML += `<tr><td style="text-align:right;">${match[1].trim()}</td><td>${match[2]}</td></tr>`;
+                } else {
+                    devicesHTML += `<tr><td style="text-align:right;">${devStr}</td><td>-</td></tr>`;
+                }
+            });
+
+            let win = window.open('', '_blank');
+            win.document.write(`<html lang="ar" dir="rtl"><head><title>عرض سعر - ${q.name}</title><style>body{font-family:'Cairo',sans-serif; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px; font-size:1rem;} th,td{border:1px solid #cbd5e1; padding:12px; text-align:center;} th{background:#f1f5f9; color:#0369a1;}</style></head><body>
+                <div style="text-align:center; border-bottom:2px solid #0284c7; padding-bottom:15px; margin-bottom:20px;">
+                    ${cLogo}
+                    <h2 style="color:#0369a1; margin-bottom:5px;">${cName}</h2>
+                    <p style="font-size:0.9rem; color:#64748b;">هاتف: ${cPhone}${cUnified}${cCR}${cTax}</p>
+                    <h3 style="margin-top:10px; background:#e0f2fe; color:#0369a1; display:inline-block; padding:8px 20px; border-radius:5px; border:1px solid #bae6fd;">عرض سعر (Quotation)</h3>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:6px; border:1px solid #cbd5e1;">
+                    <div style="text-align:right;">
+                        <p style="margin:5px 0;"><strong>اسم العميل / الشركة:</strong> ${q.name}</p>
+                        <p style="margin:5px 0;"><strong>رقم الجوال:</strong> ${q.phone}</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <p style="margin:5px 0;"><strong>رقم العرض:</strong> ${q.code}</p>
+                        <p style="margin:5px 0;"><strong>التاريخ:</strong> ${q.date}</p>
+                    </div>
+                </div>
+                <table>
+                    <thead><tr><th style="text-align:right;">وصف الجهاز / الخدمة المشمولة</th><th style="width:150px;">السعر (SAR)</th></tr></thead>
+                    <tbody>${devicesHTML}</tbody>
+                </table>
+                <div style="text-align:left; font-size:1.3rem; font-weight:bold; color:#0369a1; margin-top:20px; padding:15px; background:#f1f5f9; border-radius:6px;">الإجمالي: ${q.totalValue || 0} SAR</div>
+                ${q.notes ? `<div style="margin-top:20px; padding:15px; border:1px solid #f59e0b; background:#fffbeb; border-radius:6px;"><h4 style="color:#d97706; margin-top:0; margin-bottom:5px;">ملاحظات وشروط العرض:</h4><p style="margin:0; font-size:0.9rem; white-space:pre-wrap;">${q.notes}</p></div>` : ''}
+                <div style="text-align:center; margin-top:40px; color:#64748b; font-size:0.9rem;">
+                    <p>هذا العرض صالح لمدة 15 يوماً من تاريخ الإصدار.</p>
+                    <p>شكراً لثقتكم بخدماتنا.</p>
+                </div>
+                <script>window.onload=function(){window.print();}<\/script>
+            </body></html>`);
             win.document.close();
         }
 
@@ -1394,6 +1608,67 @@
         function saveUser(e) { e.preventDefault(); let idx=document.getElementById('u-edit-index').value; let u=getDB('aqua_pure_users_db'); let perms=Array.from(document.querySelectorAll('.u-perm:checked')).map(c=>c.value); let data={user:document.getElementById('u-username').value, pass:document.getElementById('u-password').value, perms, status:document.getElementById('u-status').value}; if(idx!=='') u[idx]=data; else u.push(data); setDB('aqua_pure_users_db',u); document.getElementById('userModal').style.display='none'; renderAllActive(); }
         function deleteUser(i) { let u=getDB('aqua_pure_users_db'); if(u[i].user==='Admin')return alert('لا يمكن حذف المدير'); u.splice(i,1); setDB('aqua_pure_users_db',u); renderAllActive(); }
 
+        // ==========================================
+        // وظائف التقارير المتقدمة (تعمل بالكامل)
+        // ==========================================
+        function toggleAdvCustomDate() {
+            let filter = document.getElementById('adv-date-filter').value;
+            document.getElementById('adv-custom-date-row').style.display = (filter === 'custom') ? 'grid' : 'none';
+        }
+
+        function updateAdvSubReports() {
+            // Placeholder for future type selection updates
+        }
+
+        function generateAdvancedReport() {
+            let type = document.getElementById('adv-type-filter').value;
+            let subType = document.getElementById('adv-subtype-filter').value;
+            let dateFilter = document.getElementById('adv-date-filter').value;
+            let fromDate = document.getElementById('adv-date-from').value;
+            let toDate = document.getElementById('adv-date-to').value;
+            
+            let clients = getDB('aqua_pure_customers_db');
+            let now = new Date();
+            let start = new Date();
+            let end = new Date();
+            
+            if(dateFilter === 'today') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'yesterday') { start.setDate(now.getDate()-1); start.setHours(0,0,0,0); end.setDate(now.getDate()-1); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'last_week') { start.setDate(now.getDate()-7); start.setHours(0,0,0,0); }
+            else if(dateFilter === 'this_month') { start = new Date(now.getFullYear(), now.getMonth(), 1); }
+            else if(dateFilter === 'last_month') { start = new Date(now.getFullYear(), now.getMonth()-1, 1); end = new Date(now.getFullYear(), now.getMonth(), 0, 23,59,59); }
+            else if(dateFilter === 'custom') { start = fromDate ? new Date(fromDate) : new Date(0); end = toDate ? new Date(toDate) : new Date(); end.setHours(23,59,59,999); }
+            else if(dateFilter === 'all_time') { start = new Date(0); }
+            
+            let filteredClients = clients.filter(c => {
+                let d = new Date(c.installDate || c.lastMaint || 0);
+                return (d >= start && d <= end);
+            });
+
+            let totalSales = 0;
+            filteredClients.forEach(c => totalSales += (parseFloat(c.totalValue) || 0) + (parseFloat(c.lastMaintValue) || 0));
+
+            if(type === 'sales') {
+                if(subType === 'summary') {
+                    alert(`ملخص المبيعات للفترة المحددة:\nعدد العمليات: ${filteredClients.length}\nإجمالي المبيعات: ${totalSales} SAR`);
+                } else {
+                    document.getElementById('rep-filter-from').value = start.toISOString().split('T')[0];
+                    document.getElementById('rep-filter-to').value = end.toISOString().split('T')[0];
+                    renderDetailedReports();
+                    document.getElementById('advancedReportsModal').style.display = 'none';
+                    alert('تم تطبيق الفلتر على جدول التقارير الشاملة بالخلفية.');
+                }
+            } else if (type === 'customers') {
+                alert(`عدد العملاء المسجلين في هذه الفترة: ${filteredClients.length} عميل`);
+            } else {
+                 alert(`تم العثور على ${filteredClients.length} عملية. جاري تطوير باقي تفاصيل المنتجات.`);
+            }
+            
+            if(subType === 'summary' || type !== 'sales') {
+                document.getElementById('advancedReportsModal').style.display = 'none';
+            }
+        }
+
         function triggerBackup() {
             let data = JSON.stringify(localStorage);
             let blob = new Blob([data], {type: "application/json"});
@@ -1415,70 +1690,6 @@
                     } catch(err) { alert('خطأ في قراءة الملف.'); }
                 };
                 reader.readAsText(fileInput.files[0]);
-            }
-        }
-
-        // ==========================================
-        // إضافات التقارير المتقدمة (تعمل بالكامل الآن)
-        // ==========================================
-        function toggleAdvCustomDate() {
-            let filter = document.getElementById('adv-date-filter').value;
-            document.getElementById('adv-custom-date-row').style.display = (filter === 'custom') ? 'grid' : 'none';
-        }
-
-        function updateAdvSubReports() {
-            // يمكن إضافة خيارات مخصصة هنا مستقبلاً عند تغيير نوع التقرير
-        }
-
-        function generateAdvancedReport() {
-            let type = document.getElementById('adv-type-filter').value;
-            let subType = document.getElementById('adv-subtype-filter').value;
-            let dateFilter = document.getElementById('adv-date-filter').value;
-            let fromDate = document.getElementById('adv-date-from').value;
-            let toDate = document.getElementById('adv-date-to').value;
-            
-            let clients = getDB('aqua_pure_customers_db');
-            let now = new Date();
-            let start = new Date();
-            let end = new Date();
-            
-            // تحديد تواريخ الفلتر
-            if(dateFilter === 'today') { start.setHours(0,0,0,0); end.setHours(23,59,59,999); }
-            else if(dateFilter === 'yesterday') { start.setDate(now.getDate()-1); start.setHours(0,0,0,0); end.setDate(now.getDate()-1); end.setHours(23,59,59,999); }
-            else if(dateFilter === 'last_week') { start.setDate(now.getDate()-7); start.setHours(0,0,0,0); }
-            else if(dateFilter === 'this_month') { start = new Date(now.getFullYear(), now.getMonth(), 1); }
-            else if(dateFilter === 'last_month') { start = new Date(now.getFullYear(), now.getMonth()-1, 1); end = new Date(now.getFullYear(), now.getMonth(), 0, 23,59,59); }
-            else if(dateFilter === 'custom') { start = fromDate ? new Date(fromDate) : new Date(0); end = toDate ? new Date(toDate) : new Date(); end.setHours(23,59,59,999); }
-            else if(dateFilter === 'all_time') { start = new Date(0); } // منذ البداية
-            
-            // تصفية العملاء/المبيعات بناءً على التاريخ
-            let filteredClients = clients.filter(c => {
-                let d = new Date(c.installDate || c.lastMaint || 0);
-                return (d >= start && d <= end);
-            });
-
-            let totalSales = 0;
-            filteredClients.forEach(c => totalSales += (parseFloat(c.totalValue) || 0) + (parseFloat(c.lastMaintValue) || 0));
-
-            // إظهار النتائج بناءً على الاختيار
-            if(type === 'sales') {
-                if(subType === 'summary') {
-                    alert(`ملخص المبيعات للفترة المحددة:\nعدد العمليات: ${filteredClients.length}\nإجمالي المبيعات: ${totalSales} SAR`);
-                } else {
-                    // إذا كان تفاصيل، يتم نقل الفلاتر للشاشة الرئيسية للتقارير
-                    document.getElementById('rep-filter-from').value = start.toISOString().split('T')[0];
-                    document.getElementById('rep-filter-to').value = end.toISOString().split('T')[0];
-                    renderDetailedReports();
-                    alert('تم تطبيق الفلتر على جدول التقارير الشاملة بالخلفية.');
-                }
-            } else if (type === 'customers') {
-                alert(`عدد العملاء المسجلين في هذه الفترة: ${filteredClients.length} عميل`);
-            } else {
-                 alert(`تم العثور على ${filteredClients.length} عملية. جاري تطوير باقي تفاصيل المنتجات.`);
-            }
-            
-            if(subType === 'summary' || type !== 'sales') {
-                document.getElementById('advancedReportsModal').style.display = 'none';
             }
         }
     </script>
