@@ -529,7 +529,6 @@
                     <div><label>رابط الموقع (GPS)</label><input type="url" id="c-gps" class="form-control" placeholder="https://maps.google.com/..."></div>
                 </div>
                 
-                <!-- التعديل هنا: إضافة المنسق والمندوب -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 15px;">
                     <div><label>المنطقة</label><select id="c-region" class="form-control"></select></div>
                     <div><label>الفني</label><select id="c-tech" class="form-control"></select></div>
@@ -554,12 +553,28 @@
                 <div style="margin-bottom: 15px;">
                     <label>ملاحظات</label><textarea id="c-notes" class="form-control" rows="2"></textarea>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label id="modal-date-label">التاريخ</label><input type="date" id="c-install-date" class="form-control" required>
+                
+                <!-- التعديل هنا: تاريخ التركيب وتاريخ الصيانة القادم -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; background: #f0fdf4; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+                    <div>
+                        <label id="modal-date-label" style="font-weight: bold; color: var(--success);">تاريخ التركيب / الصيانة الحالية</label>
+                        <input type="date" id="c-install-date" class="form-control" onchange="autoCalculateNextCustomerMaint(this.value)" required>
+                    </div>
+                    <div>
+                        <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
+                        <input type="date" id="c-next-maint-input" class="form-control">
+                        <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(30, 'c-next-maint-input', 'c-install-date')">+شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(90, 'c-next-maint-input', 'c-install-date')">+3 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(180, 'c-next-maint-input', 'c-install-date')">+6 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(365, 'c-next-maint-input', 'c-install-date')">+سنة</button>
+                        </div>
+                    </div>
                 </div>
+
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button type="button" class="btn btn-secondary" onclick="document.getElementById('customerModal').style.display='none'">إلغاء</button>
-                    <button type="submit" class="btn btn-success">حفظ</button>
+                    <button type="submit" class="btn btn-success">حفظ العميل</button>
                 </div>
             </form>
         </div>
@@ -571,26 +586,40 @@
             <h3 style="margin-bottom: 15px; color: var(--primary-dark);">🛠️ تحديث الصيانة</h3>
             <form onsubmit="saveMaintenanceDateFinal(event)">
                 <input type="hidden" id="maint-target-code">
-                <div style="margin-bottom: 12px;"><label>تاريخ صيانة اليوم</label><input type="date" id="c-last-maint" class="form-control" onchange="autoCalculateNextMaintenance(this.value)" required></div>
-                <div style="margin-bottom: 12px;"><label>الفني المنفذ للصيانة</label><select id="c-maint-tech" class="form-control maint-tech-select"></select></div>
                 
-                <!-- التعديل هنا: إضافة المنسق والمندوب للصيانة -->
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 6px; border: 1px solid #bbf7d0; margin-bottom: 15px;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-weight: bold; color: var(--success);">تاريخ صيانة اليوم</label>
+                        <input type="date" id="c-last-maint" class="form-control" onchange="autoCalculateNextMaintenance(this.value)" required>
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
+                        <input type="date" id="c-next-maint" class="form-control" required>
+                        <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(30, 'c-next-maint', 'c-last-maint')">بعد شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(90, 'c-next-maint', 'c-last-maint')">بعد 3 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(180, 'c-next-maint', 'c-last-maint')">بعد 6 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(365, 'c-next-maint', 'c-last-maint')">بعد سنة</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 12px;"><label>الفني المنفذ للصيانة</label><select id="c-maint-tech" class="form-control maint-tech-select"></select></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                     <div><label>المنسق</label><select id="c-maint-coordinator" class="form-control"></select></div>
                     <div><label>المندوب</label><select id="c-maint-delegate" class="form-control"></select></div>
                 </div>
-
                 <div style="margin-bottom: 12px;"><label>تحديث رابط الموقع (GPS) - اختياري</label><input type="url" id="c-maint-gps" class="form-control" placeholder="تحديث رابط خرائط جوجل"></div>
-                <div style="margin-bottom: 12px;"><label>قيمة الصيانة المُحصلة (SAR)</label><input type="number" step="0.01" id="c-maint-value" class="form-control" placeholder="المبلغ المحصل"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--primary-dark);">موعد الصيانة القادم</label><input type="date" id="c-next-maint" class="form-control" readonly></div>
+                <div style="margin-bottom: 15px;"><label>قيمة الصيانة المُحصلة (SAR)</label><input type="number" step="0.01" id="c-maint-value" class="form-control" placeholder="المبلغ المحصل"></div>
+                
                 <div style="display: flex; justify-content: space-between; margin-top: 20px; flex-wrap:wrap; gap:10px;">
                     <div style="display: flex; gap: 10px;">
                         <button type="button" class="btn btn-danger" onclick="cancelMaintenance()">🛑 إيقاف</button>
-                        <button type="button" class="btn btn-warning" onclick="resetMaintenance()">🔄 تصفير الصيانات</button>
+                        <button type="button" class="btn btn-warning" onclick="resetMaintenance()">🔄 تصفير</button>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button type="button" class="btn btn-secondary" onclick="document.getElementById('maintenanceModal').style.display='none'">إلغاء</button>
-                        <button type="submit" class="btn btn-success">حفظ</button>
+                        <button type="submit" class="btn btn-success">حفظ التحديث</button>
                     </div>
                 </div>
             </form>
@@ -959,6 +988,30 @@
 
         function getNextCustomerCode() { let clients = getDB('aqua_pure_customers_db'); let maxCode = 100; clients.forEach(c => { let n = parseInt(c.code); if(!isNaN(n) && n > maxCode) maxCode = n; }); return (maxCode + 1).toString(); }
 
+        // ==========================================
+        // وظائف تواريخ الصيانة السريعة
+        // ==========================================
+        function autoCalculateNextCustomerMaint(val) {
+            if(!val) return;
+            let d = new Date(val);
+            d.setMonth(d.getMonth() + 6);
+            document.getElementById('c-next-maint-input').value = d.toISOString().split('T')[0];
+        }
+
+        function setNextMaintFromNow(days, targetInputId, sourceInputId) {
+            let sourceVal = document.getElementById(sourceInputId).value;
+            let baseDate = sourceVal ? new Date(sourceVal) : new Date();
+            baseDate.setDate(baseDate.getDate() + days);
+            document.getElementById(targetInputId).value = baseDate.toISOString().split('T')[0];
+        }
+        
+        function autoCalculateNextMaintenance(val) { 
+            if(!val) return; 
+            let d = new Date(val); 
+            d.setMonth(d.getMonth() + 6); 
+            document.getElementById('c-next-maint').value = d.toISOString().split('T')[0]; 
+        }
+
         function openCustomerModal(isMaint = false) {
             currentModalMode = isMaint ? 'reason' : 'device'; populateDynamicDropdowns();
             document.getElementById('customer-modal-title').innerText = isMaint ? "إضافة صيانة (عميل خارجي)" : "إضافة عميل جديد";
@@ -967,7 +1020,12 @@
             document.getElementById('modal-date-label').innerText = isMaint ? "تاريخ الصيانة" : "تاريخ التركيب";
             document.getElementById('c-code').value = getNextCustomerCode();
             ['c-name','c-tax-number','c-phone','c-phone2','c-address','c-national-address','c-gps','c-notes'].forEach(id => { let el = document.getElementById(id); if(el) el.value = ''; });
-            document.getElementById('c-type').value = 'عميل'; document.getElementById('c-install-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('c-type').value = 'عميل'; 
+            
+            let todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('c-install-date').value = todayStr;
+            autoCalculateNextCustomerMaint(todayStr); // حساب تلقائي لـ 6 شهور
+
             document.getElementById('c-coordinator').value = '';
             document.getElementById('c-delegate').value = '';
             document.getElementById('customer-devices-container').innerHTML = ''; document.getElementById('cust-total-price').innerText = "0";
@@ -980,7 +1038,10 @@
         function openEditCustomer(code) {
             currentModalMode = 'edit'; populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(x => String(x.code) === String(code));
             if(c) {
-                document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-coordinator').value = c.coordinator || ''; document.getElementById('c-delegate').value = c.delegate || ''; document.getElementById('c-notes').value = c.notes || ''; document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
+                document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-coordinator').value = c.coordinator || ''; document.getElementById('c-delegate').value = c.delegate || ''; document.getElementById('c-notes').value = c.notes || ''; 
+                document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
+                document.getElementById('c-next-maint-input').value = c.nextMaint || '';
+
                 let container = document.getElementById('customer-devices-container'); container.innerHTML = ''; let devicesArr = c.devicesSummary ? c.devicesSummary.split('، ') : [];
                 
                 if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = false;
@@ -1010,7 +1071,9 @@
 
         function saveCustomerAndMaintenance(e) {
             e.preventDefault();
-            let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); let installDate = document.getElementById('c-install-date').value;
+            let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); 
+            let installDate = document.getElementById('c-install-date').value;
+            let nextMaintDate = document.getElementById('c-next-maint-input').value; // القيمة المعدلة يدوياً
             
             let devicesSummaryArr = [], totalValue = 0, itemsToDeduct = []; 
             document.querySelectorAll('.cust-device-row').forEach(row => { 
@@ -1025,13 +1088,12 @@
             let isEdit = idx >= 0;
 
             if(isEdit) { 
-                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate }; 
+                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, nextMaint: nextMaintDate }; 
             } else { 
-                let d = new Date(installDate); d.setMonth(d.getMonth() + 6); clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: d.toISOString().split('T')[0], warrantyDuration: "سنتان" }); 
+                clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: nextMaintDate, warrantyDuration: "سنتان" }); 
             }
             setDB('aqua_pure_customers_db', clients); 
 
-            // -- دالة الخصم التلقائي المُحسنة من المخزن --
             let autoDeductCheckbox = document.getElementById('c-auto-deduct');
             let deductMsg = "";
             if(autoDeductCheckbox && autoDeductCheckbox.checked && tech && itemsToDeduct.length > 0) {
@@ -1058,7 +1120,6 @@
             alert("تم حفظ بيانات العميل بنجاح!" + deductMsg);
         }
 
-        // التعديل الأول: ترتيب العملاء لعرض الأحدث في الأعلى (slice().reverse())
         function renderCustomersList() {
             let clients = getDB('aqua_pure_customers_db'); let s = document.getElementById('search-customer-input').value.toLowerCase(); let tech = document.getElementById('filter-tech-input').value; let reg = document.getElementById('filter-region-select').value; let typeF = document.getElementById('filter-type-select').value;
             let html = '';
@@ -1090,8 +1151,8 @@
             document.getElementById('maintenance-cards-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بطاقات صيانة</td></tr>';
         }
 
-        function openMaintenanceCardByCode(code) { populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(c) { document.getElementById('maint-target-code').value = c.code; document.getElementById('c-last-maint').value = c.lastMaint || new Date().toISOString().split('T')[0]; document.getElementById('c-maint-value').value = c.lastMaintValue || ''; document.getElementById('c-maint-tech').value = c.tech || ''; document.getElementById('c-maint-coordinator').value = c.coordinator || ''; document.getElementById('c-maint-delegate').value = c.delegate || ''; document.getElementById('c-maint-gps').value = c.gps || ''; autoCalculateNextMaintenance(document.getElementById('c-last-maint').value); document.getElementById('maintenanceModal').style.display = 'flex'; } }
-        function autoCalculateNextMaintenance(val) { if(!val) return; let d = new Date(val); d.setMonth(d.getMonth() + 6); document.getElementById('c-next-maint').value = d.toISOString().split('T')[0]; }
+        function openMaintenanceCardByCode(code) { populateDynamicDropdowns(); let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(c) { document.getElementById('maint-target-code').value = c.code; document.getElementById('c-last-maint').value = c.lastMaint || new Date().toISOString().split('T')[0]; document.getElementById('c-maint-value').value = c.lastMaintValue || ''; document.getElementById('c-maint-tech').value = c.tech || ''; document.getElementById('c-maint-coordinator').value = c.coordinator || ''; document.getElementById('c-maint-delegate').value = c.delegate || ''; document.getElementById('c-maint-gps').value = c.gps || ''; document.getElementById('c-next-maint').value = c.nextMaint || ''; if(!c.nextMaint) { autoCalculateNextMaintenance(document.getElementById('c-last-maint').value); } document.getElementById('maintenanceModal').style.display = 'flex'; } }
+        
         function saveMaintenanceDateFinal(e) { e.preventDefault(); let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.lastMaint = document.getElementById('c-last-maint').value; c.lastMaintValue = document.getElementById('c-maint-value').value || 0; c.nextMaint = document.getElementById('c-next-maint').value; c.tech = document.getElementById('c-maint-tech').value; c.coordinator = document.getElementById('c-maint-coordinator').value; c.delegate = document.getElementById('c-maint-delegate').value; if(document.getElementById('c-maint-gps').value) c.gps = document.getElementById('c-maint-gps').value; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); }
         function cancelMaintenance() { if(confirm('إيقاف الصيانة نهائياً؟')) { let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.nextMaint = ""; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); } }
         function resetMaintenance() { if(confirm('تصفير صيانات العميل؟')) { let clients = getDB('aqua_pure_customers_db'); let c = clients.find(i => String(i.code) === String(document.getElementById('maint-target-code').value)); if(c) { c.nextMaint = ""; c.lastMaintValue = 0; setDB('aqua_pure_customers_db', clients); } document.getElementById('maintenanceModal').style.display = 'none'; renderAllActive(); } }
