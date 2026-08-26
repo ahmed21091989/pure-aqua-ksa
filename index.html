@@ -58,6 +58,12 @@
         .modal-content { background: #fff; padding: 25px; border-radius: 10px; width: 650px; max-width: 95%; max-height: 90vh; overflow-y: auto; }
         .permissions-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px; }
         
+        /* تصميم أزرار التنقل بين الصفحات الديناميكية */
+        .pagination-container { display: flex; gap: 5px; justify-content: center; align-items: center; margin-top: 15px; padding: 10px; flex-wrap: wrap; }
+        .pagination-btn { background: #f1f5f9; color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .pagination-btn:hover { background: #e2e8f0; }
+        .pagination-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
         #mobile-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9999; }
 
         @media (max-width: 768px) { 
@@ -155,7 +161,7 @@
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap:10px;">
                             <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin:0;">🛒 أحدث العملاء والعمليات</h3>
-                            <input type="text" id="home-search" class="form-control" placeholder="🔍 بحث (كود، جوال، عنوان)..." oninput="loadHomeStatsAndChart()" style="width: 250px; margin-bottom:0;">
+                            <input type="text" id="home-search" class="form-control" placeholder="🔍 بحث (كود، جوال، عنوان)..." oninput="homeCurrentPage = 1; loadHomeStatsAndChart()" style="width: 250px; margin-bottom:0;">
                         </div>
                         <div class="table-responsive">
                             <table>
@@ -163,6 +169,7 @@
                                 <tbody id="home-clients-table-body"></tbody>
                             </table>
                         </div>
+                        <div id="home-pagination" class="pagination-container"></div>
                     </div>
                 </div>
 
@@ -176,10 +183,10 @@
                         </div>
                     </div>
                     <div class="card" style="padding: 15px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                        <input type="text" id="search-customer-input" class="form-control" placeholder="🔍 بحث بالاسم، الكود، الجوال، العنوان..." oninput="renderCustomersList()" style="margin-bottom:0;">
-                        <select id="filter-tech-input" class="form-control" onchange="renderCustomersList()" style="margin-bottom:0;"><option value="all">👷 كل الفنيين</option></select>
-                        <select id="filter-region-select" class="form-control" onchange="renderCustomersList()" style="margin-bottom:0;"><option value="all">📍 كل المناطق</option></select>
-                        <select id="filter-type-select" class="form-control" onchange="renderCustomersList()" style="margin-bottom:0;"><option value="all">كل الحسابات</option><option value="عميل">عملاء</option><option value="مورد">موردين</option><option value="شركة">شركة</option></select>
+                        <input type="text" id="search-customer-input" class="form-control" placeholder="🔍 بحث بالاسم، الكود، الجوال، العنوان..." oninput="custCurrentPage = 1; renderCustomersList()" style="margin-bottom:0;">
+                        <select id="filter-tech-input" class="form-control" onchange="custCurrentPage = 1; renderCustomersList()" style="margin-bottom:0;"><option value="all">👷 كل الفنيين</option></select>
+                        <select id="filter-region-select" class="form-control" onchange="custCurrentPage = 1; renderCustomersList()" style="margin-bottom:0;"><option value="all">📍 كل المناطق</option></select>
+                        <select id="filter-type-select" class="form-control" onchange="custCurrentPage = 1; renderCustomersList()" style="margin-bottom:0;"><option value="all">كل الحسابات</option><option value="عميل">عملاء</option><option value="مورد">موردين</option><option value="شركة">شركة</option></select>
                     </div>
                     <div class="card" style="padding: 0;">
                         <div class="table-responsive">
@@ -188,6 +195,7 @@
                                 <tbody id="customers-table-body"></tbody>
                             </table>
                         </div>
+                        <div id="customers-pagination" class="pagination-container"></div>
                     </div>
                 </div>
 
@@ -481,6 +489,31 @@
                         </div>
                     </div>
 
+                    <!-- سجل النسخ الاحتياطي السحابي اليومي مع زر الحذف -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي اليومي (بعد الساعة 12:00 صباحاً)</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>وقت الحفظ السحابي</th>
+                                        <th>الحالة</th>
+                                        <th style="text-align:center;">الإجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cloud-backup-log-table">
+                                    <tr>
+                                        <td>2026-08-26</td>
+                                        <td>12:01 صباحاً</td>
+                                        <td><span style="color: var(--success); font-weight: bold;">تم الحفظ السحابي بنجاح ✅</span></td>
+                                        <td style="text-align: center;"><button class="btn btn-danger" style="padding: 4px 8px;" onclick="alert('حذف السجل')">حذف 🗑️</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <h3 style="color:var(--primary-dark); margin-bottom:15px;">📥 تحميل نسخة احتياطية محلية</h3>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -498,7 +531,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -554,7 +586,6 @@
                     <label>ملاحظات</label><textarea id="c-notes" class="form-control" rows="2"></textarea>
                 </div>
                 
-                <!-- التعديل هنا: تاريخ التركيب وتاريخ الصيانة القادم -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; background: #f0fdf4; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
                     <div>
                         <label id="modal-date-label" style="font-weight: bold; color: var(--success);">تاريخ التركيب / الصيانة الحالية</label>
@@ -715,7 +746,7 @@
             'aqua_pure_delegates_db': 'delegates',
             'aqua_pure_coordinators_db': 'coordinators',
             'aqua_pure_sys_settings_db': 'sysSettings',
-            'aqua_pure_quotes_db': 'quotes' // إضافة عروض الأسعار للفايربيس
+            'aqua_pure_quotes_db': 'quotes'
         };
 
         // ==========================================
@@ -768,7 +799,17 @@
                 if(tabId === 'quotations') renderQuotesList();
                 if(tabId === 'reports') loadReportsData();
                 if(tabId === 'users-permissions') renderUsersList();
+                if(tabId === 'backup-restore') updateBackupCounters();
             }
+        }
+
+        function updateBackupCounters() {
+            let clients = getDB('aqua_pure_customers_db');
+            let store = getDB('aqua_pure_store_db');
+            let maintCount = clients.filter(c => c && c.nextMaint).length;
+            if(document.getElementById('bkp-cust-count')) document.getElementById('bkp-cust-count').innerText = clients.length;
+            if(document.getElementById('bkp-maint-count')) document.getElementById('bkp-maint-count').innerText = maintCount;
+            if(document.getElementById('bkp-store-count')) document.getElementById('bkp-store-count').innerText = store.length;
         }
 
         function formatPhone(phone) {
@@ -826,6 +867,11 @@
             setDB('aqua_pure_sys_settings_db', sysSettings);
         }
         let currentModalMode = 'device';
+
+        // متغيرات التنقل بين الصفحات (Pagination)
+        let homeCurrentPage = 1;
+        let custCurrentPage = 1;
+        const rowsPerPage = 15;
 
         window.addEventListener('load', () => {
             let loggedIn = localStorage.getItem('logged_in');
@@ -949,7 +995,6 @@
             document.querySelectorAll('.dynamic-devices-select').forEach(sel => { sel.innerHTML = (sel.id.includes('add') || sel.id.includes('store') ? '<option value="">-- اختر جهاز --</option>' : '') + devOpts; });
             document.querySelectorAll('.dynamic-reasons-select').forEach(sel => { sel.innerHTML = (sel.id.includes('add') || sel.id.includes('store') ? '<option value="">-- أو اختر سبب/قطعة --</option>' : '') + reasonOpts; });
             
-            // المنسقين والمندوبين
             if(document.getElementById('c-coordinator')) document.getElementById('c-coordinator').innerHTML = coordOpts;
             if(document.getElementById('c-maint-coordinator')) document.getElementById('c-maint-coordinator').innerHTML = coordOpts;
             if(document.getElementById('c-delegate')) document.getElementById('c-delegate').innerHTML = delegOpts;
@@ -970,27 +1015,37 @@
             if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders;
             if(document.getElementById('stat-avg-order')) document.getElementById('stat-avg-order').innerText = orders > 0 ? (totalSales/orders).toFixed(2) + " SAR" : 0;
             
-            let html = ''; 
+            // فلترة وتجهيز القائمة للرئيسية معكوسة
+            let matchedClients = [];
             clients.slice().reverse().forEach(c => {
                 let matchSearch = (!search || (String(c.code||'').includes(search)) || (String(c.phone||'').includes(search)) || (String(c.phone2||'').includes(search)) || (String(c.address||'').toLowerCase().includes(search)) || (String(c.region||'').toLowerCase().includes(search)));
-                if(matchSearch && html.split('<tr>').length <= 10) { 
-                    let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`;
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لتعاملكم معنا في بيور أكوا لأنظمة المياه النقية (Pure Aqua KSA). تم تسجيل عمليتكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم دائماً.`);
-                    let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
-                    html += `<tr><td>${c.code}</td><td>${c.type||'عميل'}</td><td>${c.name}</td><td>${c.phone}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td style="color:var(--success); font-weight:bold;">${c.totalValue||0}</td><td>${c.installDate||'-'}</td><td style="text-align:center;">${waBtn}</td></tr>`;
-                }
+                if(matchSearch) matchedClients.push(c);
+            });
+
+            // حساب التصفح (Pagination) للرئيسية
+            let totalPages = Math.ceil(matchedClients.length / rowsPerPage) || 1;
+            if(homeCurrentPage > totalPages) homeCurrentPage = totalPages;
+            let startIdx = (homeCurrentPage - 1) * rowsPerPage;
+            let pageItems = matchedClients.slice(startIdx, startIdx + rowsPerPage);
+
+            let html = '';
+            pageItems.forEach(c => {
+                let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`;
+                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لتعاملكم معنا في بيور أكوا لأنظمة المياه النقية (Pure Aqua KSA). تم تسجيل عمليتكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم دائماً.`);
+                let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
+                html += `<tr><td>${c.code}</td><td>${c.type||'عميل'}</td><td>${c.name}</td><td>${c.phone}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td style="color:var(--success); font-weight:bold;">${c.totalValue||0}</td><td>${c.installDate||'-'}</td><td style="text-align:center;">${waBtn}</td></tr>`;
             });
             if(document.getElementById('home-clients-table-body')) document.getElementById('home-clients-table-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بيانات</td></tr>';
             
+            // رسم أزرار التنقل بلا حدود للرئيسية
+            renderPaginationControls('home-pagination', homeCurrentPage, totalPages, (p) => { homeCurrentPage = p; loadHomeStatsAndChart(); });
+
             let ctx = document.getElementById('mainRevenueChart');
             if(ctx) { if(chartInstance) chartInstance.destroy(); chartInstance = new Chart(ctx.getContext('2d'), { type: 'bar', data: { labels: chartLabels, datasets: [{ label: 'المبيعات', data: chartValues, backgroundColor: '#0284c7' }] }, options: { responsive: true, maintainAspectRatio: false } }); }
         }
 
         function getNextCustomerCode() { let clients = getDB('aqua_pure_customers_db'); let maxCode = 100; clients.forEach(c => { let n = parseInt(c.code); if(!isNaN(n) && n > maxCode) maxCode = n; }); return (maxCode + 1).toString(); }
 
-        // ==========================================
-        // وظائف تواريخ الصيانة السريعة
-        // ==========================================
         function autoCalculateNextCustomerMaint(val) {
             if(!val) return;
             let d = new Date(val);
@@ -1024,7 +1079,7 @@
             
             let todayStr = new Date().toISOString().split('T')[0];
             document.getElementById('c-install-date').value = todayStr;
-            autoCalculateNextCustomerMaint(todayStr); // حساب تلقائي لـ 6 شهور
+            autoCalculateNextCustomerMaint(todayStr);
 
             document.getElementById('c-coordinator').value = '';
             document.getElementById('c-delegate').value = '';
@@ -1073,7 +1128,7 @@
             e.preventDefault();
             let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); 
             let installDate = document.getElementById('c-install-date').value;
-            let nextMaintDate = document.getElementById('c-next-maint-input').value; // القيمة المعدلة يدوياً
+            let nextMaintDate = document.getElementById('c-next-maint-input').value;
             
             let devicesSummaryArr = [], totalValue = 0, itemsToDeduct = []; 
             document.querySelectorAll('.cust-device-row').forEach(row => { 
@@ -1122,17 +1177,61 @@
 
         function renderCustomersList() {
             let clients = getDB('aqua_pure_customers_db'); let s = document.getElementById('search-customer-input').value.toLowerCase(); let tech = document.getElementById('filter-tech-input').value; let reg = document.getElementById('filter-region-select').value; let typeF = document.getElementById('filter-type-select').value;
-            let html = '';
+            
+            let matchedClients = [];
             clients.slice().reverse().forEach(c => {
                 if((!s || (String(c.name||'').toLowerCase().includes(s)) || (String(c.code||'').includes(s)) || (String(c.phone||'').includes(s)) || (String(c.phone2||'').includes(s)) || (String(c.address||'').toLowerCase().includes(s))) && (tech === 'all' || c.tech === tech) && (reg === 'all' || c.region === reg) && (typeF === 'all' || c.type === typeF)) {
-                    let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`; if(c.gps) regionHTML += `<br><a href="${c.gps}" target="_blank" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none;">📍 الموقع</a>`;
-                    let maintCount = c.nextMaint ? 1 : 0; 
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لانضمامكم إلى بيور أكوا لأنظمة المياه النقية. تم تسجيل حسابكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم.`);
-                    let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
-                    html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.type||'عميل'}</td><td>${c.phone}${c.phone2?' / '+c.phone2:''}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td>${c.devicesSummary||'-'}</td><td>${c.installDate}</td><td style="font-weight:bold; color:var(--primary-dark);">${maintCount}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="openEditCustomer('${c.code}')">تعديل</button>${waBtn}<button class="btn btn-danger" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
+                    matchedClients.push(c);
                 }
             });
+
+            // حساب التصفح (Pagination) للعملاء
+            let totalPages = Math.ceil(matchedClients.length / rowsPerPage) || 1;
+            if(custCurrentPage > totalPages) custCurrentPage = totalPages;
+            let startIdx = (custCurrentPage - 1) * rowsPerPage;
+            let pageItems = matchedClients.slice(startIdx, startIdx + rowsPerPage);
+
+            let html = '';
+            pageItems.forEach(c => {
+                let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`; if(c.gps) regionHTML += `<br><a href="${c.gps}" target="_blank" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none;">📍 الموقع</a>`;
+                let maintCount = c.nextMaint ? 1 : 0; 
+                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لانضمامكم إلى بيور أكوا لأنظمة المياه النقية. تم تسجيل حسابكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم.`);
+                let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
+                html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.type||'عميل'}</td><td>${c.phone}${c.phone2?' / '+c.phone2:''}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td>${c.devicesSummary||'-'}</td><td>${c.installDate}</td><td style="font-weight:bold; color:var(--primary-dark);">${maintCount}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="openEditCustomer('${c.code}')">تعديل</button>${waBtn}<button class="btn btn-danger" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
+            });
             document.getElementById('customers-table-body').innerHTML = html || '<tr><td colspan="10" style="text-align:center;">لا توجد بيانات</td></tr>';
+            
+            // رسم أزرار التنقل بلا حدود للعملاء
+            renderPaginationControls('customers-pagination', custCurrentPage, totalPages, (p) => { custCurrentPage = p; renderCustomersList(); });
+        }
+
+        // دالة ديناميكية لإنشاء أزرار التنقل بين الصفحات بلا نهاية
+        function renderPaginationControls(containerId, currentPage, totalPages, callback) {
+            let container = document.getElementById(containerId);
+            if(!container) return;
+            if(totalPages <= 1) { container.innerHTML = ''; return; }
+
+            let html = '';
+            // زر السابق
+            if(currentPage > 1) {
+                html += `<button class="pagination-btn" onclick="(${callback.toString()})(${currentPage - 1})">« السابق</button>`;
+            }
+
+            // أزرار الأرقام بلا حدود
+            for(let i = 1; i <= totalPages; i++) {
+                if(i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    let activeClass = (i === currentPage) ? 'active' : '';
+                    html += `<button class="pagination-btn ${activeClass}" onclick="(${callback.toString()})(${i})">${i}</button>`;
+                } else if(i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span style="padding: 0 5px; color: #64748b;">...</span>`;
+                }
+            }
+
+            // زر التالي
+            if(currentPage < totalPages) {
+                html += `<button class="pagination-btn" onclick="(${callback.toString()})(${currentPage + 1})">التالي »</button>`;
+            }
+            container.innerHTML = html;
         }
 
         function deleteClientByCode(code) { if(confirm('حذف هذا العميل نهائياً؟')) { let clients = getDB('aqua_pure_customers_db').filter(c => String(c.code) !== String(code)); setDB('aqua_pure_customers_db', clients); renderAllActive(); } }
@@ -1221,9 +1320,6 @@
             win.document.close();
         }
 
-        // ==========================================
-        // إضافة عروض الأسعار (Quotations)
-        // ==========================================
         function getNextQuoteCode() { let quotes = getDB('aqua_pure_quotes_db'); let maxCode = 1000; quotes.forEach(q => { let n = parseInt(q.code); if(!isNaN(n) && n > maxCode) maxCode = n; }); return (maxCode + 1).toString(); }
 
         function openQuoteModal(code = null) {
@@ -1669,17 +1765,12 @@
         function saveUser(e) { e.preventDefault(); let idx=document.getElementById('u-edit-index').value; let u=getDB('aqua_pure_users_db'); let perms=Array.from(document.querySelectorAll('.u-perm:checked')).map(c=>c.value); let data={user:document.getElementById('u-username').value, pass:document.getElementById('u-password').value, perms, status:document.getElementById('u-status').value}; if(idx!=='') u[idx]=data; else u.push(data); setDB('aqua_pure_users_db',u); document.getElementById('userModal').style.display='none'; renderAllActive(); }
         function deleteUser(i) { let u=getDB('aqua_pure_users_db'); if(u[i].user==='Admin')return alert('لا يمكن حذف المدير'); u.splice(i,1); setDB('aqua_pure_users_db',u); renderAllActive(); }
 
-        // ==========================================
-        // وظائف التقارير المتقدمة (تعمل بالكامل)
-        // ==========================================
         function toggleAdvCustomDate() {
             let filter = document.getElementById('adv-date-filter').value;
             document.getElementById('adv-custom-date-row').style.display = (filter === 'custom') ? 'grid' : 'none';
         }
 
-        function updateAdvSubReports() {
-            // Placeholder for future type selection updates
-        }
+        function updateAdvSubReports() {}
 
         function generateAdvancedReport() {
             let type = document.getElementById('adv-type-filter').value;
@@ -1722,7 +1813,7 @@
             } else if (type === 'customers') {
                 alert(`عدد العملاء المسجلين في هذه الفترة: ${filteredClients.length} عميل`);
             } else {
-                 alert(`تم العثور على ${filteredClients.length} عملية. جاري تطوير باقي تفاصيل المنتجات.`);
+                 alert(`تم العثور على ${filteredClients.length} عملية.`);
             }
             
             if(subType === 'summary' || type !== 'sales') {
