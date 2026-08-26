@@ -58,7 +58,6 @@
         .modal-content { background: #fff; padding: 25px; border-radius: 10px; width: 650px; max-width: 95%; max-height: 90vh; overflow-y: auto; }
         .permissions-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px; }
         
-        /* تصميم أزرار التنقل بين الصفحات الديناميكية */
         .pagination-container { display: flex; gap: 5px; justify-content: center; align-items: center; margin-top: 15px; padding: 10px; flex-wrap: wrap; }
         .pagination-btn { background: #f1f5f9; color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .pagination-btn:hover { background: #e2e8f0; }
@@ -594,11 +593,19 @@
                     <div>
                         <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
                         <input type="date" id="c-next-maint-input" class="form-control">
-                        <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(30, 'c-next-maint-input', 'c-install-date')">+شهر</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(90, 'c-next-maint-input', 'c-install-date')">+3 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(180, 'c-next-maint-input', 'c-install-date')">+6 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="setNextMaintFromNow(365, 'c-next-maint-input', 'c-install-date')">+سنة</button>
+                        <div style="display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(30, 'c-next-maint-input', 'c-install-date')">+شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(60, 'c-next-maint-input', 'c-install-date')">+شهرين</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(90, 'c-next-maint-input', 'c-install-date')">+3 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(120, 'c-next-maint-input', 'c-install-date')">+4 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(150, 'c-next-maint-input', 'c-install-date')">+5 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(180, 'c-next-maint-input', 'c-install-date')">+6 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(210, 'c-next-maint-input', 'c-install-date')">+7 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(240, 'c-next-maint-input', 'c-install-date')">+8 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(270, 'c-next-maint-input', 'c-install-date')">+9 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(300, 'c-next-maint-input', 'c-install-date')">+10 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(330, 'c-next-maint-input', 'c-install-date')">+11 شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(365, 'c-next-maint-input', 'c-install-date')">+12 شهر</button>
                         </div>
                     </div>
                 </div>
@@ -626,11 +633,19 @@
                     <div style="margin-bottom: 5px;">
                         <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
                         <input type="date" id="c-next-maint" class="form-control" required>
-                        <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(30, 'c-next-maint', 'c-last-maint')">بعد شهر</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(90, 'c-next-maint', 'c-last-maint')">بعد 3 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(180, 'c-next-maint', 'c-last-maint')">بعد 6 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="setNextMaintFromNow(365, 'c-next-maint', 'c-last-maint')">بعد سنة</button>
+                        <div style="display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(30, 'c-next-maint', 'c-last-maint')">+شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(60, 'c-next-maint', 'c-last-maint')">+شهرين</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(90, 'c-next-maint', 'c-last-maint')">+3 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(120, 'c-next-maint', 'c-last-maint')">+4 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(150, 'c-next-maint', 'c-last-maint')">+5 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(180, 'c-next-maint', 'c-last-maint')">+6 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(210, 'c-next-maint', 'c-last-maint')">+7 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(240, 'c-next-maint', 'c-last-maint')">+8 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(270, 'c-next-maint', 'c-last-maint')">+9 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(300, 'c-next-maint', 'c-last-maint')">+10 شهور</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(330, 'c-next-maint', 'c-last-maint')">+11 شهر</button>
+                            <button type="button" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="setNextMaintFromNow(365, 'c-next-maint', 'c-last-maint')">+12 شهر</button>
                         </div>
                     </div>
                 </div>
@@ -1015,14 +1030,12 @@
             if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders;
             if(document.getElementById('stat-avg-order')) document.getElementById('stat-avg-order').innerText = orders > 0 ? (totalSales/orders).toFixed(2) + " SAR" : 0;
             
-            // فلترة وتجهيز القائمة للرئيسية معكوسة
             let matchedClients = [];
             clients.slice().reverse().forEach(c => {
                 let matchSearch = (!search || (String(c.code||'').includes(search)) || (String(c.phone||'').includes(search)) || (String(c.phone2||'').includes(search)) || (String(c.address||'').toLowerCase().includes(search)) || (String(c.region||'').toLowerCase().includes(search)));
                 if(matchSearch) matchedClients.push(c);
             });
 
-            // حساب التصفح (Pagination) للرئيسية
             let totalPages = Math.ceil(matchedClients.length / rowsPerPage) || 1;
             if(homeCurrentPage > totalPages) homeCurrentPage = totalPages;
             let startIdx = (homeCurrentPage - 1) * rowsPerPage;
@@ -1037,7 +1050,6 @@
             });
             if(document.getElementById('home-clients-table-body')) document.getElementById('home-clients-table-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بيانات</td></tr>';
             
-            // رسم أزرار التنقل بلا حدود للرئيسية
             renderPaginationControls('home-pagination', homeCurrentPage, totalPages, (p) => { homeCurrentPage = p; loadHomeStatsAndChart(); });
 
             let ctx = document.getElementById('mainRevenueChart');
@@ -1185,7 +1197,6 @@
                 }
             });
 
-            // حساب التصفح (Pagination) للعملاء
             let totalPages = Math.ceil(matchedClients.length / rowsPerPage) || 1;
             if(custCurrentPage > totalPages) custCurrentPage = totalPages;
             let startIdx = (custCurrentPage - 1) * rowsPerPage;
@@ -1201,23 +1212,19 @@
             });
             document.getElementById('customers-table-body').innerHTML = html || '<tr><td colspan="10" style="text-align:center;">لا توجد بيانات</td></tr>';
             
-            // رسم أزرار التنقل بلا حدود للعملاء
             renderPaginationControls('customers-pagination', custCurrentPage, totalPages, (p) => { custCurrentPage = p; renderCustomersList(); });
         }
 
-        // دالة ديناميكية لإنشاء أزرار التنقل بين الصفحات بلا نهاية
         function renderPaginationControls(containerId, currentPage, totalPages, callback) {
             let container = document.getElementById(containerId);
             if(!container) return;
             if(totalPages <= 1) { container.innerHTML = ''; return; }
 
             let html = '';
-            // زر السابق
             if(currentPage > 1) {
                 html += `<button class="pagination-btn" onclick="(${callback.toString()})(${currentPage - 1})">« السابق</button>`;
             }
 
-            // أزرار الأرقام بلا حدود
             for(let i = 1; i <= totalPages; i++) {
                 if(i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
                     let activeClass = (i === currentPage) ? 'active' : '';
@@ -1227,7 +1234,6 @@
                 }
             }
 
-            // زر التالي
             if(currentPage < totalPages) {
                 html += `<button class="pagination-btn" onclick="(${callback.toString()})(${currentPage + 1})">التالي »</button>`;
             }
