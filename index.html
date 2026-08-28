@@ -113,6 +113,7 @@
                 <li data-target="qr-invoices" onclick="switchTab('qr-invoices', this)">📱 <span>فواتير QR</span></li>
                 <li data-target="quotations" onclick="switchTab('quotations', this)">📜 <span>عروض الأسعار</span></li>
                 <li data-target="reports" onclick="switchTab('reports', this)">📈 <span>التقارير الشاملة</span></li>
+                <li data-target="financials" onclick="switchTab('financials', this)">💰 <span>المالية والمصروفات</span></li>
                 <li data-target="users-permissions" onclick="switchTab('users-permissions', this)">🔑 <span>المستخدمون والصلاحيات</span></li>
                 <li data-target="system-settings" onclick="switchTab('system-settings', this)">🛠️ <span>الإعدادات الأساسية</span></li>
                 <li data-target="backup-restore" onclick="switchTab('backup-restore', this)">💾 <span>النسخة الاحتياطية</span></li>
@@ -241,9 +242,12 @@
 
                 <!-- 5. إدارة الفنيين -->
                 <div id="technicians-management" class="tab-content">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">👷 الفنيين</h2>
-                        <button class="btn" onclick="openTechnicianModal()">+ إضافة فني</button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-warning" onclick="openCashModal()">💵 تصفية الكاش</button>
+                            <button class="btn" onclick="openTechnicianModal()">+ إضافة فني</button>
+                        </div>
                     </div>
                     <div class="card" style="padding: 0;">
                         <div class="table-responsive">
@@ -416,7 +420,42 @@
                     </div>
                 </div>
 
-                <!-- 12. المستخدمون -->
+                <!-- 12. المالية والمصروفات -->
+                <div id="financials" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h2 style="font-size: 1.4rem; color: var(--primary-dark);">💰 المالية والمصروفات</h2>
+                        <button class="btn btn-danger" onclick="openExpenseModal()">+ إضافة مصروف</button>
+                    </div>
+                    
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: center;">
+                            <div style="background:#f0fdf4; padding:20px; border-radius:8px; border:1px solid #bbf7d0;">
+                                <h3 style="color:#166534; font-size:1.1rem; margin-bottom:10px;">إجمالي الإيرادات</h3>
+                                <div id="fin-total-revenue" style="font-size:1.8rem; font-weight:bold; color:var(--success);">0 SAR</div>
+                            </div>
+                            <div style="background:#fef2f2; padding:20px; border-radius:8px; border:1px solid #fecaca;">
+                                <h3 style="color:#991b1b; font-size:1.1rem; margin-bottom:10px;">إجمالي المصروفات</h3>
+                                <div id="fin-total-expenses" style="font-size:1.8rem; font-weight:bold; color:var(--danger);">0 SAR</div>
+                            </div>
+                            <div style="background:#eff6ff; padding:20px; border-radius:8px; border:1px solid #bfdbfe;">
+                                <h3 style="color:#1e40af; font-size:1.1rem; margin-bottom:10px;">صافي الربح</h3>
+                                <div id="fin-net-profit" style="font-size:1.8rem; font-weight:bold; color:var(--primary-color);">0 SAR</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 0;">
+                        <h3 style="padding:15px; border-bottom:1px solid #cbd5e1; margin:0;">سجل المصروفات</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>التاريخ</th><th>البند / الوصف</th><th>المبلغ (SAR)</th><th style="text-align:center;">إجراء</th></tr></thead>
+                                <tbody id="expenses-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. المستخدمون -->
                 <div id="users-permissions" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">🔑 المستخدمون والصلاحيات</h2>
@@ -436,7 +475,7 @@
                     </div>
                 </div>
 
-                <!-- 13. الإعدادات -->
+                <!-- 14. الإعدادات -->
                 <div id="system-settings" class="tab-content">
                     <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 20px;">🛠️ بيانات الشركة وإعدادات الفاتورة</h2>
                     <div class="card">
@@ -464,7 +503,7 @@
                     </div>
                 </div>
 
-                <!-- 14. النسخة الاحتياطية -->
+                <!-- 15. النسخة الاحتياطية -->
                 <div id="backup-restore" class="tab-content">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
@@ -488,7 +527,6 @@
                         </div>
                     </div>
 
-                    <!-- سجل النسخ الاحتياطي السحابي اليومي مع زر الحذف -->
                     <div class="card" style="margin-bottom: 20px;">
                         <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي اليومي (بعد الساعة 12:00 صباحاً)</h3>
                         <div class="table-responsive">
@@ -672,6 +710,47 @@
         </div>
     </div>
 
+    <!-- Modal: المالية والمصروفات -->
+    <div id="expenseModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <h3 style="margin-bottom: 15px; color: var(--danger);">💸 إضافة مصروف جديد</h3>
+            <form onsubmit="saveExpense(event)">
+                <div style="margin-bottom: 12px;"><label>التاريخ</label><input type="date" id="exp-date" class="form-control" required></div>
+                <div style="margin-bottom: 12px;"><label>البند / الوصف (إيجار، رواتب، بنزين...)</label><input type="text" id="exp-desc" class="form-control" required></div>
+                <div style="margin-bottom: 15px;"><label>المبلغ (SAR)</label><input type="number" step="0.01" id="exp-amount" class="form-control" required></div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('expenseModal').style.display='none'">إلغاء</button>
+                    <button type="submit" class="btn btn-danger">حفظ المصروف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: تصفية عهدة الكاش للفنيين -->
+    <div id="cashSettlementModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h3 style="margin-bottom: 15px; color: var(--warning);">💵 تصفية عهدة الكاش للفنيين</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div><label>الفني</label><select id="cash-tech-select" class="form-control" onchange="calculateCash()"></select></div>
+                <div><label>التاريخ</label><input type="date" id="cash-date-select" class="form-control" onchange="calculateCash()"></div>
+            </div>
+            <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
+                <h4 style="color: #b45309; margin-bottom: 5px;">إجمالي الكاش المطلوب توريده</h4>
+                <div id="cash-total-amount" style="font-size: 2rem; font-weight: bold; color: var(--warning);">0 SAR</div>
+            </div>
+            <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border-color);">
+                <table style="margin-bottom: 0;">
+                    <thead><tr><th>العميل</th><th>نوع العملية</th><th>المبلغ</th></tr></thead>
+                    <tbody id="cash-details-tbody"></tbody>
+                </table>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('cashSettlementModal').style.display='none'">إغلاق</button>
+                <button type="button" class="btn btn-success" onclick="settleCash()">✅ تأكيد توريد الكاش للصندوق</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: عروض الأسعار -->
     <div id="quoteModal" class="modal">
         <div class="modal-content">
@@ -725,7 +804,7 @@
     <!-- Modals الإعدادات الأخرى -->
     <div id="warrantyModal" class="modal"><div class="modal-content" style="max-width: 500px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">⚙️ إعدادات الضمان</h3><form onsubmit="saveWarrantySettings(event)"><input type="hidden" id="w-target-code"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;"><div><label>العميل</label><input type="text" id="w-name-input" class="form-control" required></div><div><label>الجوال</label><input type="text" id="w-phone-input" class="form-control" required></div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;"><div><label>المنطقة</label><select id="w-region-input" class="form-control w-dynamic-region"></select></div><div><label>مدة الضمان</label><input type="text" id="w-duration-input" class="form-control" required></div></div><div style="margin-bottom:12px;"><label>رابط الموقع (GPS)</label><input type="url" id="w-gps-input" class="form-control"></div><div style="margin-bottom:15px; background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1;"><label style="color:var(--primary-dark); font-weight:bold;">الأجهزة و أسباب الصيانة المشمولة</label><div style="display:flex; gap:10px; margin-bottom:10px;"><select class="form-control dynamic-devices-select" id="w-add-device" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة جهاز</option></select><select class="form-control dynamic-reasons-select" id="w-add-reason" onchange="addToWarranty(this.value); this.value='';"><option value="">+ إضافة سبب/قطعة</option></select></div><input type="text" id="w-devices-input" class="form-control" required placeholder="ستظهر هنا العناصر التي قمت باختيارها..."></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('warrantyModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ الإعدادات</button></div></form></div></div>
     <div id="basicModal" class="modal"><div class="modal-content" style="max-width: 400px;"><h3 id="basic-modal-title" style="margin-bottom:15px; color:var(--primary-dark);">إضافة</h3><form onsubmit="saveBasicItem(event)"><input type="hidden" id="basic-item-type"><div style="margin-bottom:15px;"><label id="basic-label-name"></label><input type="text" id="basic-input-name" class="form-control" required></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('basicModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
-    <div id="userModal" class="modal"><div class="modal-content"><h3 style="margin-bottom:15px; color:var(--primary-dark);">🔑 المستخدمون</h3><form onsubmit="saveUser(event)"><input type="hidden" id="u-edit-index"><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:15px;"><div><label>الاسم</label><input type="text" id="u-username" class="form-control" required></div><div><label>المرور</label><input type="text" id="u-password" class="form-control" required></div><div><label>الحالة</label><select id="u-status" class="form-control"><option value="active">نشط</option><option value="inactive">غير نشط</option></select></div></div><div class="permissions-grid"><label><input type="checkbox" class="u-perm" value="الرئيسية" checked disabled> الرئيسية</label><label><input type="checkbox" class="u-perm" value="العملاء والموردون"> العملاء والموردون</label><label><input type="checkbox" class="u-perm" value="بطاقات الصيانات"> بطاقات الصيانات</label><label><input type="checkbox" class="u-perm" value="تذكير الصيانات"> تذكير الصيانات</label><label><input type="checkbox" class="u-perm" value="إدارة الفنيين"> إدارة الفنيين</label><label><input type="checkbox" class="u-perm" value="مخزن الفنيين"> مخزن الفنيين</label><label><input type="checkbox" class="u-perm" value="البيانات الأساسية"> البيانات الأساسية</label><label><input type="checkbox" class="u-perm" value="كروت الضمان"> كروت الضمان</label><label><input type="checkbox" class="u-perm" value="فواتير QR"> فواتير QR</label><label><input type="checkbox" class="u-perm" value="عروض الأسعار"> عروض الأسعار</label><label><input type="checkbox" class="u-perm" value="التقارير الشاملة"> التقارير الشاملة</label><label><input type="checkbox" class="u-perm" value="الإعدادات الأساسية"> الإعدادات الأساسية</label><label><input type="checkbox" class="u-perm" value="النسخة الاحتياطية"> النسخة الاحتياطية</label><label><input type="checkbox" class="u-perm" value="المستخدمون والصلاحيات"> المستخدمون والصلاحيات</label></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
+    <div id="userModal" class="modal"><div class="modal-content"><h3 style="margin-bottom:15px; color:var(--primary-dark);">🔑 المستخدمون</h3><form onsubmit="saveUser(event)"><input type="hidden" id="u-edit-index"><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:15px;"><div><label>الاسم</label><input type="text" id="u-username" class="form-control" required></div><div><label>المرور</label><input type="text" id="u-password" class="form-control" required></div><div><label>الحالة</label><select id="u-status" class="form-control"><option value="active">نشط</option><option value="inactive">غير نشط</option></select></div></div><div class="permissions-grid"><label><input type="checkbox" class="u-perm" value="الرئيسية" checked disabled> الرئيسية</label><label><input type="checkbox" class="u-perm" value="العملاء والموردون"> العملاء والموردون</label><label><input type="checkbox" class="u-perm" value="بطاقات الصيانات"> بطاقات الصيانات</label><label><input type="checkbox" class="u-perm" value="تذكير الصيانات"> تذكير الصيانات</label><label><input type="checkbox" class="u-perm" value="إدارة الفنيين"> إدارة الفنيين</label><label><input type="checkbox" class="u-perm" value="مخزن الفنيين"> مخزن الفنيين</label><label><input type="checkbox" class="u-perm" value="البيانات الأساسية"> البيانات الأساسية</label><label><input type="checkbox" class="u-perm" value="كروت الضمان"> كروت الضمان</label><label><input type="checkbox" class="u-perm" value="فواتير QR"> فواتير QR</label><label><input type="checkbox" class="u-perm" value="عروض الأسعار"> عروض الأسعار</label><label><input type="checkbox" class="u-perm" value="التقارير الشاملة"> التقارير الشاملة</label><label><input type="checkbox" class="u-perm" value="المالية والمصروفات"> المالية والمصروفات</label><label><input type="checkbox" class="u-perm" value="الإعدادات الأساسية"> الإعدادات الأساسية</label><label><input type="checkbox" class="u-perm" value="النسخة الاحتياطية"> النسخة الاحتياطية</label><label><input type="checkbox" class="u-perm" value="المستخدمون والصلاحيات"> المستخدمون والصلاحيات</label></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
     <div id="technicianModal" class="modal"><div class="modal-content" style="max-width: 450px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">👷 الفني</h3><form onsubmit="saveTechnician(event)"><input type="hidden" id="tech-edit-index"><div style="margin-bottom:12px;"><label>الاسم</label><input type="text" id="tech-name-input" class="form-control" required></div><div style="margin-bottom:12px;"><label>الجوال</label><input type="text" id="tech-phone-input" class="form-control"></div><div style="margin-bottom:15px;"><label>الحالة</label><select id="tech-status-input" class="form-control"><option value="نشط">نشط</option><option value="غير نشط">غير نشط</option></select></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('technicianModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ</button></div></form></div></div>
     <div id="storeActionModal" class="modal"><div class="modal-content" style="max-width: 550px;"><h3 id="store-modal-title" style="margin-bottom:15px; color:var(--primary-dark);">حركة المخزن</h3><form onsubmit="saveStoreAction(event)"><input type="hidden" id="store-action-type"><div style="margin-bottom:12px;"><label>الفني</label><select id="store-tech-name" class="form-control" required></select></div><div style="background:#f1f5f9; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #cbd5e1;"><label style="color:var(--primary-dark); font-weight:bold; margin-bottom:10px; display:block;">المنتجات أو القطع المستهدفة والكميات</label><div id="store-items-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;"></div><div style="display:flex; gap:10px;"><button type="button" class="btn btn-secondary" onclick="addStoreItemRow()">+ إضافة منتج/قطعة أخرى</button></div></div><div style="display:flex; justify-content:flex-end; gap:10px;"><button type="button" class="btn btn-secondary" onclick="document.getElementById('storeActionModal').style.display='none'">إلغاء</button><button type="submit" class="btn btn-success">حفظ العملية</button></div></form></div></div>
     <div id="techMovementsModal" class="modal"><div class="modal-content" style="max-width: 700px;"><h3 style="margin-bottom:15px; color:var(--primary-dark);">📦 سجل الحركات</h3><div class="table-responsive" style="margin-bottom:15px;"><table><thead><tr><th>الفني</th><th>النوع</th><th>المنتج/السبب</th><th>الكمية</th><th>التاريخ</th><th style="text-align:center;">إجراءات</th></tr></thead><tbody id="tech-movements-tbody"></tbody></table></div><div style="display:flex; justify-content:flex-end;"><button class="btn btn-secondary" onclick="document.getElementById('techMovementsModal').style.display='none'">إغلاق</button></div></div></div>
@@ -761,7 +840,8 @@
             'aqua_pure_delegates_db': 'delegates',
             'aqua_pure_coordinators_db': 'coordinators',
             'aqua_pure_sys_settings_db': 'sysSettings',
-            'aqua_pure_quotes_db': 'quotes'
+            'aqua_pure_quotes_db': 'quotes',
+            'aqua_pure_expenses_db': 'expenses' // تم إضافة قاعدة المصروفات هنا
         };
 
         // ==========================================
@@ -794,7 +874,11 @@
         function getDB(key) { 
             try { 
                 let data = JSON.parse(localStorage.getItem(key)); 
-                return Array.isArray(data) ? data.filter(i => i) : (data || []); 
+                // المشرط هنا: معالجة مشكلة تحويل الفايربيس للقوائم إلى كائنات
+                if (data && typeof data === 'object' && !Array.isArray(data)) {
+                    data = Object.values(data);
+                }
+                return Array.isArray(data) ? data.filter(i => i !== null && i !== "") : []; 
             } catch(e) { return []; } 
         }
 
@@ -813,6 +897,7 @@
                 if(tabId === 'qr-invoices') renderInvoicesList();
                 if(tabId === 'quotations') renderQuotesList();
                 if(tabId === 'reports') loadReportsData();
+                if(tabId === 'financials') renderFinancials(); // تفعيل عرض شاشة المالية
                 if(tabId === 'users-permissions') renderUsersList();
                 if(tabId === 'backup-restore') updateBackupCounters();
             }
@@ -872,8 +957,9 @@
         let localCust = getDB('aqua_pure_customers_db'); if(localCust.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_customers_db')))) setDB('aqua_pure_customers_db', []);
         let localStore = getDB('aqua_pure_store_db'); if(localStore.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_store_db')))) setDB('aqua_pure_store_db', []);
         let localQuotes = getDB('aqua_pure_quotes_db'); if(localQuotes.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_quotes_db')))) setDB('aqua_pure_quotes_db', []);
+        let localExpenses = getDB('aqua_pure_expenses_db'); if(localExpenses.length === 0 && !Array.isArray(JSON.parse(localStorage.getItem('aqua_pure_expenses_db')))) setDB('aqua_pure_expenses_db', []);
         
-        let defaultPerms = ["الرئيسية", "العملاء والموردون", "بطاقات الصيانات", "تذكير الصيانات", "إدارة الفنيين", "مخزن الفنيين", "البيانات الأساسية", "كروت الضمان", "فواتير QR", "عروض الأسعار", "التقارير الشاملة", "الإعدادات الأساسية", "النسخة الاحتياطية", "المستخدمون والصلاحيات"];
+        let defaultPerms = ["الرئيسية", "العملاء والموردون", "بطاقات الصيانات", "تذكير الصيانات", "إدارة الفنيين", "مخزن الفنيين", "البيانات الأساسية", "كروت الضمان", "فواتير QR", "عروض الأسعار", "التقارير الشاملة", "المالية والمصروفات", "الإعدادات الأساسية", "النسخة الاحتياطية", "المستخدمون والصلاحيات"];
         if(getDB('aqua_pure_users_db').length === 0) setDB('aqua_pure_users_db', [{ user: "Admin", pass: "1234", perms: defaultPerms, status: "active" }]);
         
         let sysSettings = JSON.parse(localStorage.getItem('aqua_pure_sys_settings_db'));
@@ -925,6 +1011,10 @@
             e.preventDefault();
             let u = document.getElementById('login-username').value.trim().toLowerCase();
             let p = document.getElementById('login-password').value.trim();
+            
+            // تحويل الأرقام العربية للإنجليزية فوراً لو العميل استخدم كيبورد عربي
+            p = p.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+
             let users = getDB('aqua_pure_users_db');
             let validUser = users.find(x => x && x.user && x.user.toLowerCase() === u && x.pass === p);
             if(!validUser && (u === 'admin' || u === 'أدمن' || u === 'ادمن') && p === '1234') { validUser = { user: "Admin", perms: defaultPerms, status: "active" }; }
@@ -1014,6 +1104,133 @@
             if(document.getElementById('c-maint-coordinator')) document.getElementById('c-maint-coordinator').innerHTML = coordOpts;
             if(document.getElementById('c-delegate')) document.getElementById('c-delegate').innerHTML = delegOpts;
             if(document.getElementById('c-maint-delegate')) document.getElementById('c-maint-delegate').innerHTML = delegOpts;
+        }
+
+        // ==========================================
+        // وظائف المالية وتصفية عهدة الفنيين
+        // ==========================================
+        function openExpenseModal() {
+            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('exp-desc').value = '';
+            document.getElementById('exp-amount').value = '';
+            document.getElementById('expenseModal').style.display = 'flex';
+        }
+
+        function saveExpense(e) {
+            e.preventDefault();
+            let date = document.getElementById('exp-date').value;
+            let desc = document.getElementById('exp-desc').value.trim();
+            let amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+            
+            let exps = getDB('aqua_pure_expenses_db');
+            exps.push({ id: Date.now().toString(), date, desc, amount });
+            setDB('aqua_pure_expenses_db', exps);
+            
+            document.getElementById('expenseModal').style.display = 'none';
+            renderFinancials();
+        }
+
+        function deleteExpense(id) {
+            if(confirm('حذف هذا المصروف نهائياً؟')) {
+                let exps = getDB('aqua_pure_expenses_db').filter(x => String(x.id) !== String(id));
+                setDB('aqua_pure_expenses_db', exps);
+                renderFinancials();
+            }
+        }
+
+        function renderFinancials() {
+            let clients = getDB('aqua_pure_customers_db');
+            let exps = getDB('aqua_pure_expenses_db');
+            
+            let totalRev = 0;
+            clients.forEach(c => {
+                totalRev += (parseFloat(c.totalValue) || 0) + (parseFloat(c.lastMaintValue) || 0);
+            });
+            
+            let totalExp = 0;
+            let html = '';
+            exps.slice().reverse().forEach(x => {
+                totalExp += parseFloat(x.amount) || 0;
+                html += `<tr><td>${x.date}</td><td>${x.desc}</td><td style="color:var(--danger); font-weight:bold;">${x.amount}</td><td style="text-align:center;"><button class="btn btn-danger" style="padding:4px 10px;" onclick="deleteExpense('${x.id}')">حذف</button></td></tr>`;
+            });
+            
+            if(document.getElementById('fin-total-revenue')) document.getElementById('fin-total-revenue').innerText = totalRev.toLocaleString() + ' SAR';
+            if(document.getElementById('fin-total-expenses')) document.getElementById('fin-total-expenses').innerText = totalExp.toLocaleString() + ' SAR';
+            
+            let net = totalRev - totalExp;
+            let netEl = document.getElementById('fin-net-profit');
+            if(netEl) {
+                netEl.innerText = net.toLocaleString() + ' SAR';
+                netEl.style.color = net >= 0 ? 'var(--primary-color)' : 'var(--danger)';
+            }
+            
+            if(document.getElementById('expenses-table-body')) {
+                document.getElementById('expenses-table-body').innerHTML = html || `<tr><td colspan="4" style="text-align:center;">لا توجد مصروفات مسجلة</td></tr>`;
+            }
+        }
+
+        function openCashModal() {
+            populateDynamicDropdowns();
+            let techOpts = getDB('aqua_pure_techs_db').map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+            document.getElementById('cash-tech-select').innerHTML = '<option value="">-- اختر الفني --</option>' + techOpts;
+            document.getElementById('cash-date-select').value = new Date().toISOString().split('T')[0];
+            document.getElementById('cash-details-tbody').innerHTML = '';
+            document.getElementById('cash-total-amount').innerText = '0 SAR';
+            document.getElementById('cashSettlementModal').style.display = 'flex';
+        }
+
+        function calculateCash() {
+            let tech = document.getElementById('cash-tech-select').value;
+            let date = document.getElementById('cash-date-select').value;
+            if(!tech || !date) return;
+            
+            let clients = getDB('aqua_pure_customers_db');
+            let totalCash = 0;
+            let html = '';
+            
+            clients.forEach(c => {
+                if(c.tech === tech && c.installDate === date && !c.installSettled && (parseFloat(c.totalValue) > 0)) {
+                    totalCash += parseFloat(c.totalValue);
+                    html += `<tr><td>${c.name}</td><td>تركيب جهاز</td><td>${c.totalValue} SAR</td></tr>`;
+                }
+                if(c.tech === tech && c.lastMaint === date && !c.lastMaintSettled && (parseFloat(c.lastMaintValue) > 0)) {
+                    totalCash += parseFloat(c.lastMaintValue);
+                    html += `<tr><td>${c.name}</td><td>صيانة</td><td>${c.lastMaintValue} SAR</td></tr>`;
+                }
+            });
+            
+            document.getElementById('cash-details-tbody').innerHTML = html || `<tr><td colspan="3" style="text-align:center;">لا توجد مبالغ غير موردة لهذا اليوم</td></tr>`;
+            document.getElementById('cash-total-amount').innerText = totalCash + ' SAR';
+        }
+
+        function settleCash() {
+            let tech = document.getElementById('cash-tech-select').value;
+            let date = document.getElementById('cash-date-select').value;
+            if(!tech || !date) return alert('الرجاء اختيار الفني والتاريخ اولاً.');
+            
+            let clients = getDB('aqua_pure_customers_db');
+            let updated = false;
+            
+            clients.forEach(c => {
+                if(c.tech === tech && c.installDate === date && !c.installSettled && (parseFloat(c.totalValue) > 0)) {
+                    c.installSettled = true;
+                    updated = true;
+                }
+                if(c.tech === tech && c.lastMaint === date && !c.lastMaintSettled && (parseFloat(c.lastMaintValue) > 0)) {
+                    c.lastMaintSettled = true;
+                    updated = true;
+                }
+            });
+            
+            if(updated) {
+                setDB('aqua_pure_customers_db', clients);
+                alert('✅ تم توريد الكاش للصندوق وتصفية عهدة الفني بنجاح!');
+                calculateCash(); // Refresh the table
+                renderAllActive(); // Refresh everything else
+                document.getElementById('cashSettlementModal').style.display = 'none';
+            } else {
+                alert('لا توجد مبالغ كاش مطلوبة لتوريدها لهذا الفني اليوم.');
+            }
         }
 
         let chartInstance = null;
