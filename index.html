@@ -539,7 +539,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
                         <span style="font-size: 0.9rem; color: var(--success); font-weight: bold; background: #f0fdf4; padding: 6px 12px; border-radius: 6px; border: 1px solid #bbf7d0;">
-                            ℹ️ يتم أخذ نسخة احتياطية كاملة ونقل بيانات تلقائي كل يوم الساعة 12:00 صباحاً
+                            ℹ️ يتم أخذ نسخة احتياطية يومية وتخزينها سحابياً لضمان حفظ البيانات
                         </span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
@@ -548,16 +548,16 @@
                         <div class="card" style="margin:0; text-align:center;"><h3 style="color:#64748b; font-size:1rem;">حركات المخزن</h3><div id="bkp-store-count" style="font-size:2rem; font-weight:bold; color:var(--warning);">0</div></div>
                     </div>
                     <div class="card" style="margin-bottom: 20px;">
-                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي اليومي</h3>
+                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي</h3>
                         <div class="table-responsive">
                             <table>
-                                <thead><tr><th>التاريخ</th><th>وقت الحفظ السحابي</th><th>الحالة</th><th style="text-align:center;">الإجراء</th></tr></thead>
+                                <thead><tr><th>التاريخ</th><th>الوقت</th><th>الوصف / ملف تعريف</th><th style="text-align:center;">الإجراءات</th></tr></thead>
                                 <tbody id="cloud-backup-log-table"></tbody>
                             </table>
                         </div>
                     </div>
                     <div class="card">
-                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">📥 تحميل نسخة احتياطية محلية</h3>
+                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">📥 تحميل نسخة احتياطية محلية إلى جهازك</h3>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
                             <button class="btn btn-success" onclick="triggerBackup()">تنزيل نسخة احتياطية كاملة (JSON)</button>
                         </div>
@@ -624,7 +624,6 @@
                         <label id="modal-date-label" style="font-weight: bold; color: var(--success);">تاريخ التركيب / الصيانة الحالية</label>
                         <input type="date" id="c-install-date" class="form-control" onchange="autoCalculateNextCustomerMaint(this.value)" required>
                     </div>
-                    <!-- التعديل الجديد: إدخال الشهور يدوياً -->
                     <div>
                         <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
                         <input type="date" id="c-next-maint-input" class="form-control" style="margin-bottom: 5px;">
@@ -654,7 +653,6 @@
                             <label style="font-weight: bold; color: var(--success);">تاريخ صيانة اليوم</label>
                             <input type="date" id="c-last-maint" class="form-control" onchange="autoCalculateNextMaintenance(this.value)" required>
                         </div>
-                        <!-- التعديل الجديد: إدخال الشهور يدوياً -->
                         <div>
                             <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
                             <input type="date" id="c-next-maint" class="form-control" required style="margin-bottom: 5px;">
@@ -943,14 +941,23 @@
             else { aside.classList.add('open'); overlay.classList.add('open'); }
         }
 
+        // ==============================================================
+        // حل المشكلة رقم 1: نظام الدخول للمستخدمين الجدد (تجاهل المسافات)
+        // ==============================================================
         function handleLogin(e) {
             e.preventDefault();
             let u = document.getElementById('login-username').value.trim().toLowerCase();
             let p = document.getElementById('login-password').value.trim();
             p = p.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
             let users = getDB('aqua_pure_users_db');
-            let validUser = users.find(x => x && x.user && x.user.toLowerCase() === u && x.pass === p);
-            if(!validUser && (u === 'admin' || u === 'أدمن' || u === 'ادمن') && p === '1234') { validUser = { user: "Admin", perms: defaultPerms, status: "active" }; }
+            
+            // إضافة trim() لاسم المستخدم وكلمة المرور من قاعدة البيانات لضمان عدم وجود مسافات وهمية
+            let validUser = users.find(x => x && x.user && String(x.user).trim().toLowerCase() === u && String(x.pass).trim() === p);
+            
+            if(!validUser && (u === 'admin' || u === 'أدمن' || u === 'ادمن') && p === '1234') { 
+                validUser = { user: "Admin", perms: defaultPerms, status: "active" }; 
+            }
+            
             if(validUser) {
                 if(validUser.status === 'inactive') return alert('الحساب موقوف من قبل الإدارة.');
                 localStorage.setItem('logged_in', 'true');
@@ -1167,16 +1174,60 @@
             if(document.getElementById('expenses-table-body')) { document.getElementById('expenses-table-body').innerHTML = html || `<tr><td colspan="4" style="text-align:center;">لا توجد مصروفات مسجلة في هذه الفترة</td></tr>`; }
         }
 
-        // ==========================================
-        // النسخ الاحتياطي التلقائي
-        // ==========================================
+        // ==============================================================
+        // حل المشكلة رقم 2: النسخ الاحتياطي التلقائي والجداول
+        // ==============================================================
         function initAutoBackup() {
+            let todayStr = new Date().toISOString().split('T')[0];
+            
+            // 1. الاستماع للبيانات الوصفية للنسخ من فايربيز لعرضها في الجدول فوراً
+            database.ref('backup_metadata').on('value', (snapshot) => {
+                let metadata = snapshot.val();
+                let tbody = document.getElementById('cloud-backup-log-table');
+                if(!tbody) return;
+                
+                let html = '';
+                let hasTodayBackup = false;
+                
+                if(metadata) {
+                    let keys = Object.keys(metadata).sort((a,b) => b.localeCompare(a)); // ترتيب تنازلي (الأحدث فوق)
+                    keys.forEach(k => {
+                        if(k === todayStr) hasTodayBackup = true;
+                        let desc = metadata[k].description || 'نسخة احتياطية تلقائية';
+                        let time = metadata[k].time || '-';
+                        html += `<tr>
+                            <td>${k}</td>
+                            <td>${time}</td>
+                            <td style="color:var(--primary-dark); font-weight:bold;">${desc}</td>
+                            <td style="text-align: center;">
+                                <div class="action-btns">
+                                    <button class="btn btn-warning" style="padding: 4px 8px;" onclick="addBackupDescription('${k}')">إضافة ملف تعريف</button>
+                                    <button class="btn btn-danger" style="padding: 4px 8px;" onclick="deleteCloudBackup('${k}')">حذف</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                    });
+                } else {
+                    html = '<tr><td colspan="4" style="text-align:center;">لا توجد نسخ احتياطية سحابية حتى الآن</td></tr>';
+                }
+                tbody.innerHTML = html;
+
+                // 2. فحص هل أخذنا نسخة اليوم؟ لو لسه، ياخدها فوراً أول ما تفتح البرنامج!
+                let lastBackup = localStorage.getItem('last_auto_backup_date');
+                if(!hasTodayBackup && lastBackup !== todayStr) {
+                    performCloudBackup();
+                }
+            });
+
+            // 3. مراقبة الوقت كل دقيقة عشان لو البرنامج مفتوح الساعة 12 بالليل يأخذها في وقتها
             setInterval(() => {
                 let now = new Date();
                 if(now.getHours() === 0 && now.getMinutes() === 0) {
-                    let todayStr = now.toISOString().split('T')[0];
-                    let lastBackup = localStorage.getItem('last_auto_backup_date');
-                    if(lastBackup !== todayStr) { performCloudBackup(); localStorage.setItem('last_auto_backup_date', todayStr); }
+                    let currentTodayStr = now.toISOString().split('T')[0];
+                    let currentLast = localStorage.getItem('last_auto_backup_date');
+                    if(currentLast !== currentTodayStr) { 
+                        performCloudBackup(); 
+                    }
                 }
             }, 60000);
         }
@@ -1187,12 +1238,38 @@
             let now = new Date();
             let backupId = now.toISOString().split('T')[0];
             let timeStr = now.toLocaleTimeString('ar-SA');
+            
+            // حفظ الداتا الكاملة في مسار
             database.ref('backups/' + backupId).set(allData).then(() => {
-                let logHtml = `<tr><td>${backupId}</td><td>${timeStr}</td><td><span style="color: var(--success); font-weight: bold;">تم الحفظ السحابي بنجاح ✅</span></td><td style="text-align: center;"><button class="btn btn-danger" style="padding: 4px 8px;" onclick="alert('للحذف اذهب للوحة Firebase')">حذف 🗑️</button></td></tr>`;
-                let tbody = document.getElementById('cloud-backup-log-table');
-                if(tbody) tbody.insertAdjacentHTML('afterbegin', logHtml);
+                // حفظ البيانات الوصفية في مسار خفيف عشان الجدول يقرأه بسرعة بدون تحميل كل الداتا
+                database.ref('backup_metadata/' + backupId).set({
+                    time: timeStr,
+                    description: 'نسخة احتياطية تلقائية'
+                });
+                localStorage.setItem('last_auto_backup_date', backupId);
             });
         }
+
+        // إضافة ملف تعريف / وصف للنسخة
+        function addBackupDescription(backupId) {
+            let desc = prompt("أدخل ملف التعريف / الوصف لهذه النسخة:", "مثال: نسخة قبل تحديث الأسعار");
+            if(desc && desc.trim() !== "") {
+                database.ref('backup_metadata/' + backupId + '/description').set(desc.trim()).then(() => {
+                    alert('تم حفظ ملف التعريف بنجاح!');
+                });
+            }
+        }
+
+        // حذف النسخة الاحتياطية نهائياً من فايربيز
+        function deleteCloudBackup(backupId) {
+            if(confirm('تحذير شديد: هل أنت متأكد من حذف هذه النسخة الاحتياطية نهائياً من السيرفر السحابي؟')) {
+                database.ref('backups/' + backupId).remove();
+                database.ref('backup_metadata/' + backupId).remove().then(() => {
+                    alert('تم حذف النسخة بنجاح!');
+                });
+            }
+        }
+        
         initAutoBackup();
 
         // ==========================================
@@ -1261,7 +1338,6 @@
             document.getElementById('c-next-maint').value = d.toISOString().split('T')[0]; 
         }
 
-        // دالة ذكية لحساب موعد الصيانة القادم بناءً على عدد الشهور المدخلة
         function setNextMaintByMonths(monthsInputId, targetInputId, sourceInputId) {
             let months = parseInt(document.getElementById(monthsInputId).value);
             if(isNaN(months) || months <= 0) return;
@@ -1942,6 +2018,9 @@
             if(confirm('تأكيد الحذف؟')) { let list = getDB(key).filter(i => i !== val); setDB(key, list); renderAllActive(); populateDynamicDropdowns(); } 
         }
 
+        // ==============================================================
+        // حل المشكلة رقم 1 (الجزء الخاص بإنشاء المستخدم) - إضافة trim()
+        // ==============================================================
         function renderUsersList() { 
             let html=''; let s = document.getElementById('search-users-input') ? document.getElementById('search-users-input').value.toLowerCase() : '';
             getDB('aqua_pure_users_db').forEach((u,i) => {
@@ -1954,7 +2033,23 @@
         }
         function openUserModal() { document.getElementById('u-edit-index').value=''; document.getElementById('u-username').value=''; document.getElementById('u-password').value=''; document.getElementById('u-status').value='active'; document.querySelectorAll('.u-perm').forEach(c=>c.checked=false); document.querySelector('.u-perm[value="الرئيسية"]').checked=true; document.getElementById('userModal').style.display='flex'; }
         function openEditUser(i) { let u=getDB('aqua_pure_users_db')[i]; document.getElementById('u-edit-index').value=i; document.getElementById('u-username').value=u.user; document.getElementById('u-password').value=u.pass; document.getElementById('u-status').value=u.status; document.querySelectorAll('.u-perm').forEach(c=>c.checked=(u.perms||[]).includes(c.value)); document.querySelector('.u-perm[value="الرئيسية"]').checked=true; document.getElementById('userModal').style.display='flex'; }
-        function saveUser(e) { e.preventDefault(); let idx=document.getElementById('u-edit-index').value; let u=getDB('aqua_pure_users_db'); let perms=Array.from(document.querySelectorAll('.u-perm:checked')).map(c=>c.value); let data={user:document.getElementById('u-username').value, pass:document.getElementById('u-password').value, perms, status:document.getElementById('u-status').value}; if(idx!=='') u[idx]=data; else u.push(data); setDB('aqua_pure_users_db',u); document.getElementById('userModal').style.display='none'; renderAllActive(); }
+        function saveUser(e) { 
+            e.preventDefault(); 
+            let idx=document.getElementById('u-edit-index').value; 
+            let u=getDB('aqua_pure_users_db'); 
+            let perms=Array.from(document.querySelectorAll('.u-perm:checked')).map(c=>c.value); 
+            let data={
+                // مسح المسافات هنا لضمان عدم وجود مسافات وهمية
+                user: document.getElementById('u-username').value.trim(), 
+                pass: document.getElementById('u-password').value.trim(), 
+                perms, 
+                status: document.getElementById('u-status').value
+            }; 
+            if(idx!=='') u[idx]=data; else u.push(data); 
+            setDB('aqua_pure_users_db',u); 
+            document.getElementById('userModal').style.display='none'; 
+            renderAllActive(); 
+        }
         function deleteUser(i) { let u=getDB('aqua_pure_users_db'); if(u[i].user==='Admin')return alert('لا يمكن حذف المدير'); u.splice(i,1); setDB('aqua_pure_users_db',u); renderAllActive(); }
 
         function toggleAdvCustomDate() {
