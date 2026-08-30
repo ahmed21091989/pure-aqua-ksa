@@ -283,7 +283,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة تصفية الكاش الجديدة -->
+                <!-- 7. تصفية الكاش -->
                 <div id="cash-settlement" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">💵 تصفية كاش الفنيين</h2>
@@ -322,7 +322,7 @@
                     </div>
                 </div>
 
-                <!-- 7. البيانات الأساسية -->
+                <!-- 8. البيانات الأساسية -->
                 <div id="basic-data" class="tab-content">
                     <div style="margin-bottom: 20px;"><h2 style="font-size: 1.4rem; color: var(--primary-dark);">⚙️ البيانات الأساسية</h2></div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
@@ -334,7 +334,7 @@
                     </div>
                 </div>
 
-                <!-- 8. كروت الضمان -->
+                <!-- 9. كروت الضمان -->
                 <div id="warranty-cards" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">🛡️ كروت الضمان</h2>
@@ -353,7 +353,7 @@
                     </div>
                 </div>
 
-                <!-- 9. فواتير QR -->
+                <!-- 10. فواتير QR -->
                 <div id="qr-invoices" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">📱 فواتير QR</h2>
@@ -369,7 +369,7 @@
                     </div>
                 </div>
 
-                <!-- 10. عروض الأسعار -->
+                <!-- 11. عروض الأسعار -->
                 <div id="quotations" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">📜 عروض الأسعار</h2>
@@ -388,7 +388,7 @@
                     </div>
                 </div>
 
-                <!-- 11. التقارير الشاملة -->
+                <!-- 12. التقارير الشاملة -->
                 <div id="reports" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">📈 التقارير الشاملة</h2>
@@ -440,7 +440,7 @@
                     </div>
                 </div>
 
-                <!-- 12. المالية والمصروفات -->
+                <!-- 13. المالية والمصروفات -->
                 <div id="financials" class="tab-content">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">💰 المالية والمصروفات</h2>
@@ -486,7 +486,7 @@
                     </div>
                 </div>
 
-                <!-- 13. المستخدمون -->
+                <!-- 14. المستخدمون -->
                 <div id="users-permissions" class="tab-content">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark);">🔑 المستخدمون والصلاحيات</h2>
@@ -506,7 +506,7 @@
                     </div>
                 </div>
 
-                <!-- 14. الإعدادات -->
+                <!-- 15. الإعدادات -->
                 <div id="system-settings" class="tab-content">
                     <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 20px;">🛠️ بيانات الشركة وإعدادات الفاتورة</h2>
                     <div class="card">
@@ -534,7 +534,7 @@
                     </div>
                 </div>
 
-                <!-- 15. النسخة الاحتياطية -->
+                <!-- 16. النسخة الاحتياطية -->
                 <div id="backup-restore" class="tab-content">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
@@ -624,15 +624,13 @@
                         <label id="modal-date-label" style="font-weight: bold; color: var(--success);">تاريخ التركيب / الصيانة الحالية</label>
                         <input type="date" id="c-install-date" class="form-control" onchange="autoCalculateNextCustomerMaint(this.value)" required>
                     </div>
+                    <!-- التعديل الجديد: إدخال الشهور يدوياً -->
                     <div>
                         <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
-                        <input type="date" id="c-next-maint-input" class="form-control">
-                        <div style="display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(30, 'c-next-maint-input', 'c-install-date')">+شهر</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(60, 'c-next-maint-input', 'c-install-date')">+شهرين</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(90, 'c-next-maint-input', 'c-install-date')">+3 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(180, 'c-next-maint-input', 'c-install-date')">+6 شهور</button>
-                            <button type="button" class="btn btn-secondary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="setNextMaintFromNow(365, 'c-next-maint-input', 'c-install-date')">+12 شهر</button>
+                        <input type="date" id="c-next-maint-input" class="form-control" style="margin-bottom: 5px;">
+                        <div style="display: flex; align-items: center; gap: 5px; background: #e0f2fe; padding: 5px; border-radius: 4px; border: 1px solid #bae6fd;">
+                            <label style="font-size: 0.8rem; color: #0369a1; margin: 0; white-space: nowrap;">جدولة بعد (شهور):</label>
+                            <input type="number" id="c-months-add" min="1" class="form-control" placeholder="رقم (مثال: 6)" style="margin: 0; padding: 4px; height: 30px;" oninput="setNextMaintByMonths('c-months-add', 'c-next-maint-input', 'c-install-date')">
                         </div>
                     </div>
                 </div>
@@ -656,9 +654,14 @@
                             <label style="font-weight: bold; color: var(--success);">تاريخ صيانة اليوم</label>
                             <input type="date" id="c-last-maint" class="form-control" onchange="autoCalculateNextMaintenance(this.value)" required>
                         </div>
+                        <!-- التعديل الجديد: إدخال الشهور يدوياً -->
                         <div>
                             <label style="font-weight: bold; color: var(--primary-dark);">موعد الصيانة القادم</label>
-                            <input type="date" id="c-next-maint" class="form-control" required>
+                            <input type="date" id="c-next-maint" class="form-control" required style="margin-bottom: 5px;">
+                            <div style="display: flex; align-items: center; gap: 5px; background: #e0f2fe; padding: 5px; border-radius: 4px; border: 1px solid #bae6fd;">
+                                <label style="font-size: 0.8rem; color: #0369a1; margin: 0; white-space: nowrap;">تأجيل لمدة (شهور):</label>
+                                <input type="number" id="maint-months-add" min="1" class="form-control" placeholder="رقم (مثال: 1)" style="margin: 0; padding: 4px; height: 30px;" oninput="setNextMaintByMonths('maint-months-add', 'c-next-maint', 'c-last-maint')">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1251,18 +1254,21 @@
             document.getElementById('c-next-maint-input').value = d.toISOString().split('T')[0];
         }
 
-        function setNextMaintFromNow(days, targetInputId, sourceInputId) {
-            let sourceVal = document.getElementById(sourceInputId).value;
-            let baseDate = sourceVal ? new Date(sourceVal) : new Date();
-            baseDate.setDate(baseDate.getDate() + days);
-            document.getElementById(targetInputId).value = baseDate.toISOString().split('T')[0];
-        }
-        
         function autoCalculateNextMaintenance(val) { 
             if(!val) return; 
             let d = new Date(val); 
             d.setMonth(d.getMonth() + 6); 
             document.getElementById('c-next-maint').value = d.toISOString().split('T')[0]; 
+        }
+
+        // دالة ذكية لحساب موعد الصيانة القادم بناءً على عدد الشهور المدخلة
+        function setNextMaintByMonths(monthsInputId, targetInputId, sourceInputId) {
+            let months = parseInt(document.getElementById(monthsInputId).value);
+            if(isNaN(months) || months <= 0) return;
+            let sourceVal = document.getElementById(sourceInputId).value;
+            let baseDate = sourceVal ? new Date(sourceVal) : new Date();
+            baseDate.setMonth(baseDate.getMonth() + months);
+            document.getElementById(targetInputId).value = baseDate.toISOString().split('T')[0];
         }
 
         function openCustomerModal(isMaint = false) {
@@ -1279,6 +1285,8 @@
             document.getElementById('c-install-date').value = todayStr;
             autoCalculateNextCustomerMaint(todayStr);
 
+            if(document.getElementById('c-months-add')) document.getElementById('c-months-add').value = '';
+
             document.getElementById('c-coordinator').value = '';
             document.getElementById('c-delegate').value = '';
             document.getElementById('customer-devices-container').innerHTML = ''; document.getElementById('cust-total-price').innerText = "0";
@@ -1293,6 +1301,8 @@
                 document.getElementById('c-code').value = c.code; document.getElementById('c-type').value = c.type || 'عميل'; document.getElementById('c-tax-number').value = c.customerTax || ''; document.getElementById('c-name').value = c.name; document.getElementById('c-phone').value = c.phone; document.getElementById('c-phone2').value = c.phone2 || ''; document.getElementById('c-address').value = c.address || ''; if(document.getElementById('c-national-address')) document.getElementById('c-national-address').value = c.nationalAddress || ''; document.getElementById('c-gps').value = c.gps || ''; document.getElementById('c-region').value = c.region || ''; document.getElementById('c-tech').value = c.tech || ''; document.getElementById('c-coordinator').value = c.coordinator || ''; document.getElementById('c-delegate').value = c.delegate || ''; document.getElementById('c-notes').value = c.notes || ''; 
                 document.getElementById('c-install-date').value = c.installDate || new Date().toISOString().split('T')[0];
                 document.getElementById('c-next-maint-input').value = c.nextMaint || '';
+                
+                if(document.getElementById('c-months-add')) document.getElementById('c-months-add').value = '';
 
                 let container = document.getElementById('customer-devices-container'); container.innerHTML = ''; let devicesArr = c.devicesSummary ? c.devicesSummary.split('، ') : [];
                 if(document.getElementById('c-auto-deduct')) document.getElementById('c-auto-deduct').checked = false;
@@ -1457,6 +1467,9 @@
                 document.getElementById('c-maint-tech').value = c.tech || ''; 
                 document.getElementById('c-next-maint').value = c.nextMaint || ''; 
                 if(!c.nextMaint) { autoCalculateNextMaintenance(document.getElementById('c-last-maint').value); } 
+                
+                if(document.getElementById('maint-months-add')) document.getElementById('maint-months-add').value = '';
+
                 document.getElementById('maint-devices-container').innerHTML = '';
                 document.getElementById('maint-total-price').innerText = '0';
                 addMaintDeviceRow(); 
