@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بيور أكوا لأنظمة المياه النقية - النظام السحابي المتكامل</title>
+    <title>شركة أكوا بيور لتحلية المياه - النظام السحابي المتكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -82,7 +82,7 @@
     <div id="login-screen">
         <div class="login-box">
             <img id="login-logo-img" src="" alt="Logo">
-            <h2 id="login-title">بيور أكوا لأنظمة المياه النقية</h2>
+            <h2 id="login-title">شركة أكوا بيور لتحلية المياه</h2>
             <p style="color: #64748b; margin-top: -15px; margin-bottom: 25px;">تسجيل الدخول للنظام السحابي</p>
             <form onsubmit="handleLogin(event)">
                 <input type="text" id="login-username" class="form-control" placeholder="اسم المستخدم (admin)" required style="padding: 12px; font-size: 1rem; text-align: center; direction: ltr;">
@@ -98,7 +98,7 @@
         <aside id="sidebar-menu">
             <div class="brand">
                 <img id="sidebar-logo" src="" alt="Logo">
-                <h2 id="sidebar-company-name">بيور أكوا لأنظمة المياه النقية<br><span style="font-size:0.85rem; color:#bae6fd;">Pure Aqua KSA</span></h2>
+                <h2 id="sidebar-company-name">شركة أكوا بيور لتحلية المياه<br><span style="font-size:0.85rem; color:#bae6fd;">Pure Aqua KSA</span></h2>
                 <p style="font-size: 0.75rem; color: #7dd3fc; margin-top: 5px;">النظام السحابي المتكامل</p>
             </div>
             <ul class="nav-links" id="sidebar-nav-links">
@@ -139,10 +139,30 @@
                 
                 <!-- 1. الرئيسية -->
                 <div id="home" class="tab-content active">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                        <h2 style="font-size: 1.4rem; color: var(--primary-dark);">لوحة القيادة الرئيسية</h2>
-                        <button class="btn" onclick="openCustomerModal(false)">+ إضافة عميل</button>
+                    <!-- التعديل: الجداول العلوية الثابتة بجوار لوحة القيادة -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">لوحة القيادة الرئيسية</h2>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1; justify-content: center;">
+                            <div style="background: #e0f2fe; padding: 8px 15px; border-radius: 6px; border: 1px solid #bae6fd; font-size: 0.85rem; text-align: center; min-width: 100px;">
+                                <div style="color: #0369a1; font-weight: bold;">العملاء</div>
+                                <strong id="top-stat-all-clients" style="font-size: 1.2rem; color: #0284c7;">0</strong>
+                            </div>
+                            <div style="background: #f0fdf4; padding: 8px 15px; border-radius: 6px; border: 1px solid #bbf7d0; font-size: 0.85rem; text-align: center; min-width: 100px;">
+                                <div style="color: #166534; font-weight: bold;">بطاقات الصيانات</div>
+                                <strong id="top-stat-all-maint" style="font-size: 1.2rem; color: #15803d;">0</strong>
+                            </div>
+                            <div style="background: #fef2f2; padding: 8px 15px; border-radius: 6px; border: 1px solid #fecaca; font-size: 0.85rem; text-align: center; min-width: 100px;">
+                                <div style="color: #991b1b; font-weight: bold;">صيانات متأخرة</div>
+                                <strong id="top-stat-overdue" style="font-size: 1.2rem; color: #b91c1c;">0</strong>
+                            </div>
+                            <div style="background: #fffbeb; padding: 8px 15px; border-radius: 6px; border: 1px solid #fde68a; font-size: 0.85rem; text-align: center; min-width: 100px;">
+                                <div style="color: #b45309; font-weight: bold;">صيانات قريبة</div>
+                                <strong id="top-stat-near" style="font-size: 1.2rem; color: #d97706;">0</strong>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="openCustomerModal(false)">+ إضافة عميل</button>
                     </div>
+
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
                         <div class="card" style="margin-bottom: 0;">
                             <h3 style="font-size: 1rem; color: #374151; margin-bottom: 10px;">📊 المبيعات اليومية (الشهر الحالي)</h3>
@@ -153,7 +173,7 @@
                             <h3 style="font-size: 1rem; color: #374151; margin-bottom: 15px;">ملخص الشهر</h3>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                 <div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid var(--border-color);"><div style="font-size:0.75rem; color:#64748b;">المبيعات</div><div style="font-size:1.1rem; font-weight:bold; color:var(--primary-dark);" id="stat-sales">0</div></div>
-                                <div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid var(--border-color);"><div style="font-size:0.75rem; color:#64748b;">العملاء</div><div style="font-size:1.1rem; font-weight:bold; color:var(--success);" id="stat-clients">0</div></div>
+                                <div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid var(--border-color);"><div style="font-size:0.75rem; color:#64748b;">العملاء الجدد</div><div style="font-size:1.1rem; font-weight:bold; color:var(--success);" id="stat-clients">0</div></div>
                                 <div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid var(--border-color);"><div style="font-size:0.75rem; color:#64748b;">الطلبات</div><div style="font-size:1.1rem; font-weight:bold; color:var(--warning);" id="stat-orders">0</div></div>
                                 <div style="background:#f0f9ff; padding:12px; border-radius:6px; border:1px solid #bae6fd;"><div style="font-size:0.75rem; color:#0369a1;">متوسط المشتريات</div><div style="font-size:1.1rem; font-weight:bold; color:var(--primary-color);" id="stat-avg-order">0</div></div>
                             </div>
@@ -192,7 +212,7 @@
                     <div class="card" style="padding: 0;">
                         <div class="table-responsive">
                             <table>
-                                <thead><tr><th>الكود</th><th>الاسم</th><th>النوع</th><th>الجوال</th><th>المنطقة والعنوان</th><th>الفني</th><th>الأجهزة والأسعار</th><th>التركيب</th><th>البطاقات</th><th style="text-align:center;">الإجراءات</th></tr></thead>
+                                <thead><tr><th>الكود</th><th>الاسم</th><th>النوع</th><th>الجوال</th><th>المنطقة والعنوان</th><th>الفني</th><th>الأجهزة والأسعار</th><th>التركيب / العملية</th><th>البطاقات</th><th style="text-align:center;">الإجراءات</th></tr></thead>
                                 <tbody id="customers-table-body"></tbody>
                             </table>
                         </div>
@@ -538,9 +558,13 @@
                 <div id="backup-restore" class="tab-content">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
-                        <span style="font-size: 0.9rem; color: var(--success); font-weight: bold; background: #f0fdf4; padding: 6px 12px; border-radius: 6px; border: 1px solid #bbf7d0;">
-                            ℹ️ يتم أخذ نسخة احتياطية يومية وتلقائية
-                        </span>
+                        <div style="display:flex; gap:10px;">
+                            <span style="font-size: 0.9rem; color: var(--success); font-weight: bold; background: #f0fdf4; padding: 6px 12px; border-radius: 6px; border: 1px solid #bbf7d0;">
+                                ℹ️ يتم أخذ نسخة احتياطية يومية وتلقائية
+                            </span>
+                            <!-- التعديل: زر إنشاء النسخة السحابية الآن -->
+                            <button class="btn" style="background:#0284c7; color:white; padding: 6px 12px;" onclick="triggerManualCloudBackup()">☁️ إنشاء نسخة الآن على السيرفر</button>
+                        </div>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <div class="card" style="margin:0; text-align:center;"><h3 style="color:#64748b; font-size:1rem;">إجمالي العملاء</h3><div id="bkp-cust-count" style="font-size:2rem; font-weight:bold; color:var(--primary-color);">0</div></div>
@@ -566,8 +590,9 @@
                         <h3 style="color:var(--danger); margin-bottom:15px;">🔄 استرجاع واستبدال البيانات من ملف محلي</h3>
                         <p style="color:#64748b; font-size:0.85rem; margin-bottom:10px;">تحذير: هذه العملية ستقوم باستبدال جميع البيانات الحالية بالبيانات الموجودة في الملف المرفوع.</p>
                         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <!-- التعديل: التأكيد على زر إضافة ملف قاعدة البيانات -->
                             <input type="file" id="restore-file-input" class="form-control" accept=".json" style="margin:0; max-width:300px;">
-                            <button class="btn btn-danger" onclick="restoreFromFile()">استرجاع واستبدال البيانات</button>
+                            <button class="btn btn-danger" onclick="restoreFromFile()">إضافة واسترجاع البيانات</button>
                         </div>
                     </div>
                 </div>
@@ -610,7 +635,7 @@
                     <h4 id="modal-devices-title" style="font-size: 0.95rem; color: var(--primary-dark); margin-bottom: 10px;">💧 الأجهزة / الأسباب</h4>
                     <div id="customer-devices-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
                     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 5px;">
-                        <button type="button" id="modal-add-row-btn" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="addCustomerDeviceRow()">+ إضافة</button>
+                        <button type="button" id="modal-add-row-btn" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="addCustomerDeviceRow()">+ إضافة جهاز/سبب</button>
                         <div style="font-weight: bold; color: var(--primary-dark); background: #e0f2fe; padding: 5px 15px; border-radius: 5px;">الإجمالي: <span id="cust-total-price">0</span> SAR</div>
                     </div>
                 </div>
@@ -825,23 +850,16 @@
             } catch(e) { return []; } 
         }
 
-        // ==========================================
-        // الصيانة التلقائية للبيانات (إصلاح تضاعف المبالغ القديمة)
-        // ==========================================
         function runSilentDataFix() {
             let clients = getDB('aqua_pure_customers_db');
             let needsUpdate = false;
             clients.forEach(c => {
-                // لو مبلغ التركيب هو نفسه مبلغ الصيانة وتاريخ التركيب هو نفسه تاريخ الصيانة (ده بسبب خطأ الكود القديم وقت إضافة العميل)
                 if (c.totalValue && c.lastMaintValue && parseFloat(c.totalValue) === parseFloat(c.lastMaintValue) && c.installDate === c.lastMaint) {
-                    c.lastMaintValue = 0; // تصفير مبلغ الصيانة المنسوخ بالخطأ
+                    c.lastMaintValue = 0; 
                     needsUpdate = true;
                 }
             });
-            if (needsUpdate) {
-                setDB('aqua_pure_customers_db', clients);
-                console.log('✅ تم إصلاح تضاعف المبالغ في قاعدة البيانات بنجاح.');
-            }
+            if (needsUpdate) { setDB('aqua_pure_customers_db', clients); }
         }
 
         let homeCurrentPage = 1;
@@ -903,7 +921,7 @@
                 let code = chk.value;
                 let c = clients.find(x => String(x.code) === String(code));
                 if(c && c.phone) {
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود تذكيركم بموعد صيانة الأجهزة لديكم بتاريخ ${c.nextMaint}. قيمة الصيانة المحددة ${c.lastMaintValue || 0} SAR. شركة بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود تذكيركم بموعد صيانة الأجهزة لديكم بتاريخ ${c.nextMaint}. قيمة الصيانة المحددة ${c.lastMaintValue || 0} SAR. شركة أكوا بيور لتحلية المياه.`);
                     let url = `https://wa.me/${formatPhone(c.phone)}?text=${waText}`;
                     setTimeout(() => { window.open(url, '_blank'); }, delay);
                     delay += 1500;
@@ -924,13 +942,12 @@
         
         let sysSettings = JSON.parse(localStorage.getItem('aqua_pure_sys_settings_db'));
         if(!sysSettings) {
-            sysSettings = { nameAr: "بيور أكوا لأنظمة المياه النقية", nameEn: "Pure Aqua KSA", cr: "", tax: "", unifiedNumber: "", phone1: "", phone2: "", address: "", logoBase64: "" };
+            sysSettings = { nameAr: "شركة أكوا بيور لتحلية المياه", nameEn: "Pure Aqua KSA", cr: "", tax: "", unifiedNumber: "", phone1: "", phone2: "", address: "", logoBase64: "" };
             setDB('aqua_pure_sys_settings_db', sysSettings);
         }
         let currentModalMode = 'device';
 
         window.addEventListener('load', () => {
-            // تشغيل الإصلاح الصامت لمشكلة تضاعف المبالغ
             runSilentDataFix();
             
             let loggedIn = localStorage.getItem('logged_in');
@@ -972,7 +989,6 @@
             p = p.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
             
             let users = getDB('aqua_pure_users_db');
-            
             let validUser = users.find(x => {
                 if(!x || !x.user || !x.pass) return false;
                 let dbUser = x.user.trim().toLowerCase();
@@ -1022,7 +1038,7 @@
 
         function loadSystemSettingsUI() {
             sysSettings = JSON.parse(localStorage.getItem('aqua_pure_sys_settings_db')) || sysSettings;
-            let nAr = sysSettings.nameAr || "بيور أكوا لأنظمة المياه النقية";
+            let nAr = sysSettings.nameAr || "شركة أكوا بيور لتحلية المياه";
             let nEn = sysSettings.nameEn || "Pure Aqua KSA";
             document.getElementById('sidebar-company-name').innerHTML = `${nAr}<br><span style="font-size:0.85rem; color:#bae6fd;">${nEn}</span>`;
             document.getElementById('header-phone').innerText = "الدعم: " + (sysSettings.phone1 || "");
@@ -1068,6 +1084,17 @@
             if(document.getElementById('c-maint-coordinator')) document.getElementById('c-maint-coordinator').innerHTML = coordOpts;
             if(document.getElementById('c-delegate')) document.getElementById('c-delegate').innerHTML = delegOpts;
             if(document.getElementById('c-maint-delegate')) document.getElementById('c-maint-delegate').innerHTML = delegOpts;
+        }
+
+        // ==========================================
+        // التعديل: توليد خيارات منسدلة مدمجة (للأجهزة وأسباب الصيانة)
+        // ==========================================
+        function generateDeviceReasonOptions(selectedValue = '') {
+            let devices = getDB('aqua_pure_devices_db');
+            let reasons = getDB('aqua_pure_reasons_db');
+            let devOpts = devices.map(d => `<option value="${d}" ${d===selectedValue?'selected':''}>${d}</option>`).join('');
+            let reasonOpts = reasons.map(r => `<option value="${r}" ${r===selectedValue?'selected':''}>${r}</option>`).join('');
+            return `<option value="">-- اختر --</option><optgroup label="الأجهزة المتاحة">${devOpts}</optgroup><optgroup label="أسباب الصيانة/القطع">${reasonOpts}</optgroup>`;
         }
 
         // ==========================================
@@ -1207,7 +1234,7 @@
         // ==========================================
         function checkAndRunBackup() {
             let now = new Date();
-            let todayStr = now.toISOString().split('T')[0]; // صيغة YYYY-MM-DD
+            let todayStr = now.toISOString().split('T')[0];
             let lastBackup = localStorage.getItem('last_auto_backup_date');
             
             if(lastBackup !== todayStr) { 
@@ -1247,6 +1274,14 @@
                 setDB('aqua_pure_backup_logs_db', logs);
                 renderBackupLogs();
             });
+        }
+
+        // التعديل: دالة زر النسخ الاحتياطي اليدوي
+        function triggerManualCloudBackup() {
+            let now = new Date();
+            let manualId = now.toISOString().split('T')[0] + '_Manual_' + now.getTime().toString().slice(-4);
+            performCloudBackup(manualId);
+            alert("تم إرسال أمر إنشاء النسخة السحابية بنجاح. راجع الجدول أدناه للتأكد من الحالة.");
         }
 
         function renderBackupLogs() {
@@ -1303,8 +1338,23 @@
             let clients = getDB('aqua_pure_customers_db'); let now = new Date(); let chartLabels = Array.from({length: 31}, (_, i) => (i+1).toString()); let chartValues = Array(31).fill(0); let totalSales = 0, orders = 0;
             let search = document.getElementById('home-search') ? document.getElementById('home-search').value.toLowerCase().trim() : "";
             
+            // التعديل: حساب الإحصائيات العلوية الثابتة
+            let allClientsCount = clients.length;
+            let allMaintCount = 0;
+            let overdueCount = 0;
+            let nearCount = 0;
+
             clients.forEach(c => {
                 if(!c) return; 
+                // حساب الصيانات والإحصائيات
+                if(c.nextMaint) {
+                    allMaintCount++;
+                    let st = getMaintenanceStatus(c.nextMaint);
+                    if(st.t === 'overdue') overdueCount++;
+                    if(st.t === 'near') nearCount++;
+                }
+
+                // حساب المبيعات للرسم البياني
                 let datesToIterate = [];
                 if(c.installDate && parseFloat(c.totalValue) > 0) datesToIterate.push({d: c.installDate, v: parseFloat(c.totalValue)});
                 if(c.lastMaint && parseFloat(c.lastMaintValue) > 0) datesToIterate.push({d: c.lastMaint, v: parseFloat(c.lastMaintValue)});
@@ -1314,8 +1364,15 @@
                     if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) { chartValues[d.getDate()-1] += dt.v; totalSales += dt.v; orders++; }
                 });
             });
+
+            // تحديث الإحصائيات العلوية الثابتة
+            if(document.getElementById('top-stat-all-clients')) document.getElementById('top-stat-all-clients').innerText = allClientsCount;
+            if(document.getElementById('top-stat-all-maint')) document.getElementById('top-stat-all-maint').innerText = allMaintCount;
+            if(document.getElementById('top-stat-overdue')) document.getElementById('top-stat-overdue').innerText = overdueCount;
+            if(document.getElementById('top-stat-near')) document.getElementById('top-stat-near').innerText = nearCount;
+
             if(document.getElementById('stat-sales')) document.getElementById('stat-sales').innerText = totalSales.toLocaleString() + " SAR";
-            if(document.getElementById('stat-clients')) document.getElementById('stat-clients').innerText = clients.length;
+            if(document.getElementById('stat-clients')) document.getElementById('stat-clients').innerText = allClientsCount;
             if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders;
             if(document.getElementById('stat-avg-order')) document.getElementById('stat-avg-order').innerText = orders > 0 ? (totalSales/orders).toFixed(2) + " SAR" : 0;
             
@@ -1333,9 +1390,14 @@
             let html = '';
             pageItems.forEach(c => {
                 let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`;
-                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لتعاملكم معنا في بيور أكوا لأنظمة المياه النقية (Pure Aqua KSA). تم تسجيل عمليتكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم دائماً.`);
+                
+                // التعديل: قراءة المبلغ والتاريخ للبطاقات الخارجية بشكل صحيح
+                let displayVal = parseFloat(c.totalValue) > 0 ? c.totalValue : (c.lastMaintValue || 0);
+                let displayDate = c.installDate ? c.installDate : (c.lastMaint || '-');
+
+                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لتعاملكم معنا في شركة أكوا بيور لتحلية المياه (Pure Aqua KSA). تم تسجيل عمليتكم بقيمة ${displayVal} SAR. نتشرف بخدمتكم دائماً.`);
                 let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
-                html += `<tr><td>${c.code}</td><td>${c.type||'عميل'}</td><td>${c.name}</td><td>${c.phone}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td style="color:var(--success); font-weight:bold;">${c.totalValue||0}</td><td>${c.installDate||'-'}</td><td style="text-align:center;">${waBtn}</td></tr>`;
+                html += `<tr><td>${c.code}</td><td>${c.type||'عميل'}</td><td>${c.name}</td><td>${c.phone}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td style="color:var(--success); font-weight:bold;">${displayVal}</td><td>${displayDate}</td><td style="text-align:center;">${waBtn}</td></tr>`;
             });
             if(document.getElementById('home-clients-table-body')) document.getElementById('home-clients-table-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بيانات</td></tr>';
             
@@ -1373,8 +1435,8 @@
         function openCustomerModal(isMaint = false) {
             currentModalMode = isMaint ? 'reason' : 'device'; populateDynamicDropdowns();
             document.getElementById('customer-modal-title').innerText = isMaint ? "إضافة صيانة (عميل خارجي)" : "إضافة عميل جديد";
-            document.getElementById('modal-devices-title').innerText = isMaint ? "🛠️ الأجهزة / الأسباب" : "💧 الأجهزة";
-            document.getElementById('modal-add-row-btn').innerText = isMaint ? "+ إضافة سبب" : "+ إضافة جهاز";
+            document.getElementById('modal-devices-title').innerText = isMaint ? "🛠️ الأجهزة / الأسباب" : "💧 الأجهزة / الأسباب";
+            document.getElementById('modal-add-row-btn').innerText = isMaint ? "+ إضافة سبب" : "+ إضافة جهاز/سبب";
             document.getElementById('modal-date-label').innerText = isMaint ? "تاريخ الصيانة" : "تاريخ التركيب";
             document.getElementById('c-code').value = getNextCustomerCode();
             ['c-name','c-tax-number','c-phone','c-phone2','c-address','c-national-address','c-gps','c-notes'].forEach(id => { let el = document.getElementById(id); if(el) el.value = ''; });
@@ -1409,8 +1471,10 @@
                 if(devicesArr.length === 0) addCustomerDeviceRow();
                 devicesArr.forEach(devStr => {
                     let match = devStr.match(/(.*?)\s*\(([\d.]+)\s*SAR\)/); let devName = match ? match[1].trim() : devStr.trim(); let devPrice = match ? match[2] : 0;
-                    let list = [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])]; if(!list.includes(devName) && devName) list.push(devName);
-                    let devOpts = list.map(d => `<option value="${d}" ${d===devName?'selected':''}>${d}</option>`).join('');
+                    
+                    // التعديل: استدعاء الدالة المدمجة
+                    let devOpts = generateDeviceReasonOptions(devName);
+                    
                     let row = document.createElement('div'); row.className = 'cust-device-row'; row.style.cssText = 'display:flex; gap:8px; margin-top:5px;';
                     row.innerHTML = `<select class="form-control cust-dev-type" required style="flex:2; margin-bottom:0;">${devOpts}</select><input type="number" step="0.01" class="form-control cust-dev-price" value="${devPrice}" required style="flex:1; margin-bottom:0;" oninput="calculateModalTotal()"><button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); calculateModalTotal();">✖</button>`;
                     container.appendChild(row);
@@ -1420,8 +1484,8 @@
         }
 
         function addCustomerDeviceRow() {
-            let list = currentModalMode === 'reason' ? getDB('aqua_pure_reasons_db') : (currentModalMode === 'device' ? getDB('aqua_pure_devices_db') : [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])]);
-            if(list.length===0) list=["عنصر عام"]; let devOpts = list.map(d => `<option value="${d}">${d}</option>`).join('');
+            // التعديل: استدعاء الدالة المدمجة لعرض الأجهزة والأسباب معاً
+            let devOpts = generateDeviceReasonOptions();
             let row = document.createElement('div'); row.className = 'cust-device-row'; row.style.cssText = 'display:flex; gap:8px; margin-top:5px;';
             row.innerHTML = `<select class="form-control cust-dev-type" required style="flex:2; margin-bottom:0;">${devOpts}</select><input type="number" step="0.01" class="form-control cust-dev-price" placeholder="السعر" required style="flex:1; margin-bottom:0;" oninput="calculateModalTotal()"><button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); calculateModalTotal();">✖</button>`;
             document.getElementById('customer-devices-container').appendChild(row); calculateModalTotal();
@@ -1429,9 +1493,6 @@
 
         function calculateModalTotal() { let t = 0; document.querySelectorAll('.cust-dev-price').forEach(i => t += parseFloat(i.value)||0); if(document.getElementById('cust-total-price')) document.getElementById('cust-total-price').innerText = t; }
 
-        // =========================================================
-        // التعديل الرئيسي لمنع التضاعف في حساب مبالغ العملاء
-        // =========================================================
         function saveCustomerAndMaintenance(e) {
             e.preventDefault();
             let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); 
@@ -1451,17 +1512,16 @@
             let idx = clients.findIndex(i => String(i.code) === String(code));
             let isEdit = idx >= 0;
 
-            let isExternalMaint = (currentModalMode === 'reason'); // تحديد إذا كانت العملية صيانة خارجية أم تركيب جديد
+            let isExternalMaint = (currentModalMode === 'reason');
 
             if (isEdit) { 
                 clients[idx] = { 
                     ...clients[idx], 
                     type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, 
-                    totalValue: totalValue, // تحديث مبلغ الأجهزة (لا يتم تحديث مبلغ الصيانة هنا للحفاظ عليه كما هو)
+                    totalValue: totalValue,
                     installDate, nextMaint: nextMaintDate 
                 }; 
             } else { 
-                // فصل مبلغ التركيب عن مبلغ الصيانة بناءً على نوع الإضافة
                 clients.push({ 
                     code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, 
                     totalValue: isExternalMaint ? 0 : totalValue, 
@@ -1512,9 +1572,14 @@
             pageItems.forEach(c => {
                 let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`; if(c.gps) regionHTML += `<br><a href="${c.gps}" target="_blank" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none;">📍 الموقع</a>`;
                 let maintCount = c.nextMaint ? 1 : 0; 
-                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لانضمامكم إلى بيور أكوا لأنظمة المياه النقية. تم تسجيل حسابكم بقيمة ${c.totalValue||0} SAR. نتشرف بخدمتكم.`);
+                
+                // التعديل: قراءة المبلغ والتاريخ للبطاقات الخارجية بشكل صحيح
+                let displayVal = parseFloat(c.totalValue) > 0 ? c.totalValue : (c.lastMaintValue || 0);
+                let displayDate = c.installDate ? c.installDate : (c.lastMaint || '-');
+
+                let waText = encodeURIComponent(`مرحباً ${c.name}، شكراً لانضمامكم إلى شركة أكوا بيور لتحلية المياه. تم تسجيل حسابكم بقيمة ${displayVal} SAR. نتشرف بخدمتكم.`);
                 let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
-                html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.type||'عميل'}</td><td>${c.phone}${c.phone2?' / '+c.phone2:''}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td>${c.devicesSummary||'-'}</td><td>${c.installDate}</td><td style="font-weight:bold; color:var(--primary-dark);">${maintCount}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="openEditCustomer('${c.code}')">تعديل</button>${waBtn}<button class="btn btn-danger" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
+                html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.type||'عميل'}</td><td>${c.phone}${c.phone2?' / '+c.phone2:''}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td>${c.devicesSummary||'-'}</td><td>${displayDate}</td><td style="font-weight:bold; color:var(--primary-dark);">${maintCount}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="openEditCustomer('${c.code}')">تعديل</button>${waBtn}<button class="btn btn-danger" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
             });
             document.getElementById('customers-table-body').innerHTML = html || '<tr><td colspan="10" style="text-align:center;">لا توجد بيانات</td></tr>';
             renderPaginationControls('customers-pagination', custCurrentPage, totalPages, (p) => { custCurrentPage = p; renderCustomersList(); });
@@ -1546,7 +1611,7 @@
             clients.forEach(c => {
                 if((!s || (String(c.name||'').toLowerCase().includes(s)) || (String(c.code||'').includes(s)) || (String(c.phone||'').includes(s)) || (String(c.phone2||'').includes(s))) && (tech === 'all' || c.tech === tech) && (reg === 'all' || c.region === reg)) {
                     let regionHTML = c.region || '-'; if(c.address) regionHTML += `<br><span style="font-size:0.75rem; color:#64748b;">${c.address}</span>`; if(c.gps) regionHTML += `<br><a href="${c.gps}" target="_blank" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none;">📍 الموقع</a>`;
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود إعلامكم بزيارة الصيانة الخاصة بكم. مبلغ الصيانة المستحق: ${c.lastMaintValue || 0} SAR. شكراً لثقتكم بـ بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود إعلامكم بزيارة الصيانة الخاصة بكم. مبلغ الصيانة المستحق: ${c.lastMaintValue || 0} SAR. شكراً لثقتكم بـ شركة أكوا بيور لتحلية المياه.`);
                     let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
                     html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.phone}${c.phone2?'<br>'+c.phone2:''}</td><td>${regionHTML}</td><td>${c.tech||'-'}</td><td>${c.lastMaint||c.installDate||'-'}</td><td style="color:var(--success); font-weight:bold;">${c.lastMaintValue ? c.lastMaintValue + ' SAR' : '-'}</td><td><span style="color:var(--primary-dark); font-weight:bold;">${c.nextMaint||'موقوفة'}</span></td><td style="text-align:center;"><div class="action-btns"><button class="btn btn-warning" onclick="openMaintenanceCardByCode('${c.code}')">تحديث</button>${waBtn}</div></td></tr>`;
                 }
@@ -1555,9 +1620,8 @@
         }
 
         function addMaintDeviceRow() {
-            let list = [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])];
-            if(list.length===0) list=["عنصر عام"]; 
-            let devOpts = list.map(d => `<option value="${d}">${d}</option>`).join('');
+            // التعديل: استدعاء الدالة المدمجة لعرض الأجهزة والأسباب معاً في تحديث الصيانة
+            let devOpts = generateDeviceReasonOptions();
             let row = document.createElement('div'); 
             row.className = 'maint-device-row'; 
             row.style.cssText = 'display:flex; gap:8px; margin-top:5px;';
@@ -1614,7 +1678,7 @@
                     if(itemName && itemName !== "عنصر عام") itemsToDeduct.push(itemName);
                 });
                 
-                c.lastMaintValue = totalValue; // يحفظ مبلغ الصيانة فقط هنا، ولا يضاعفه في خانة مبلغ التركيب (c.totalValue)
+                c.lastMaintValue = totalValue;
                 c.lastMaintSettled = false;
                 setDB('aqua_pure_customers_db', clients); 
                 
@@ -1669,7 +1733,7 @@
 
                 if(matchSearch && matchTech && matchReg && matchDate) {
                     let st = getMaintenanceStatus(c.nextMaint);
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود تذكيركم بموعد صيانة الأجهزة لديكم بتاريخ ${c.nextMaint}. قيمة الصيانة المحددة ${c.lastMaintValue || 0} SAR. شركة بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${c.name}، نود تذكيركم بموعد صيانة الأجهزة لديكم بتاريخ ${c.nextMaint}. قيمة الصيانة المحددة ${c.lastMaintValue || 0} SAR. شركة أكوا بيور لتحلية المياه.`);
                     let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
                     let row = `<tr><td><input type="checkbox" class="rem-chk" value="${c.code}"></td><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.phone}${c.phone2?'<br>'+c.phone2:''}</td><td>${c.region||'-'}</td><td>${c.devicesSummary||'-'}</td><td>${c.tech||'-'}</td><td>${c.nextMaint}</td><td><span style="background:${st.color}; color:#fff; padding:3px 8px; border-radius:4px;">${st.text}</span></td><td><div class="action-btns"><button class="btn btn-warning" style="padding:4px 8px;" onclick="openMaintenanceCardByCode('${c.code}')">تحديث</button>${waBtn}<button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
                     if(st.t === 'overdue') htmlO += row; else if(st.t === 'near') htmlN += row; else htmlU += row;
@@ -1697,7 +1761,7 @@
             if(!tableElement) return;
             let tableHTML = tableElement.outerHTML;
             if(tableHTML.includes('لا يوجد')) { alert('لا توجد بيانات للطباعة.'); return; }
-            let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية';
+            let cName = sysSettings.nameAr || 'شركة أكوا بيور لتحلية المياه';
             let win = window.open('', '_blank');
             win.document.write(`<html lang="ar" dir="rtl"><head><title>${titleText}</title><style>body{font-family:'Cairo',sans-serif; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ccc; padding:8px; text-align:right;} th:first-child, td:first-child {display:none;} th:last-child, td:last-child {display:none;}</style></head><body><h2 style="text-align:center;">${cName} - ${titleText}</h2>${tableHTML}<script>window.onload=function(){window.print();}<\/script></body></html>`);
             win.document.close();
@@ -1777,7 +1841,7 @@
             let html = '';
             quotes.slice().reverse().forEach(q => {
                 if(!searchVal || (String(q.name||'').toLowerCase().includes(searchVal)) || (String(q.code||'').includes(searchVal)) || (String(q.phone||'').includes(searchVal))) {
-                    let waText = encodeURIComponent(`مرحباً ${q.name}،\nمرفق لسيادتكم تفاصيل عرض السعر المطلوب بقيمة إجمالية ${q.totalValue || 0} SAR.\n\nالأجهزة والخدمات: ${q.devicesSummary}\n\nنتشرف بخدمتكم في بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${q.name}،\nمرفق لسيادتكم تفاصيل عرض السعر المطلوب بقيمة إجمالية ${q.totalValue || 0} SAR.\n\nالأجهزة والخدمات: ${q.devicesSummary}\n\nنتشرف بخدمتكم في شركة أكوا بيور لتحلية المياه.`);
                     let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${q.phone}', '${waText}')">واتساب</button>`;
                     html += `<tr><td>${q.code}</td><td><strong>${q.name}</strong></td><td>${q.phone}</td><td>${q.devicesSummary}</td><td style="color:var(--success); font-weight:bold;">${q.totalValue}</td><td>${q.date}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="openQuoteModal('${q.code}')">تعديل</button><button class="btn btn-success" onclick="printQuote('${q.code}')">طباعة</button>${waBtn}<button class="btn btn-danger" onclick="deleteQuote('${q.code}')">حذف</button></div></td></tr>`;
                 }
@@ -1790,7 +1854,7 @@
 
         function printQuote(code) {
             let q = getDB('aqua_pure_quotes_db').find(i => String(i.code) === String(code)); if(!q) return;
-            let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية'; let cPhone = sysSettings.phone1 || ''; let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; margin-bottom:10px; border-radius:5px;">` : ''; 
+            let cName = sysSettings.nameAr || 'شركة أكوا بيور لتحلية المياه'; let cPhone = sysSettings.phone1 || ''; let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; margin-bottom:10px; border-radius:5px;">` : ''; 
             
             let devicesHTML = '';
             let devicesArr = q.devicesSummary ? q.devicesSummary.split('، ') : [];
@@ -1870,7 +1934,7 @@
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `تقرير_حسابات_بيور_أكوا_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute("download", `تقرير_حسابات_الشركة_${new Date().toISOString().split('T')[0]}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1882,7 +1946,7 @@
             let html = '';
             clients.forEach(c => {
                 if(!searchVal || (String(c.name||'').toLowerCase().includes(searchVal)) || (String(c.code||'').includes(searchVal)) || (String(c.phone||'').includes(searchVal)) || (String(c.phone2||'').includes(searchVal))) {
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، تفاصيل فاتورتكم برقم ${c.code} بمبلغ إجمالي ${c.totalValue || 0} SAR. بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${c.name}، تفاصيل فاتورتكم برقم ${c.code} بمبلغ إجمالي ${c.totalValue || 0} SAR. شركة أكوا بيور لتحلية المياه.`);
                     let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
                     html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.customerTax||'-'}</td><td>${c.phone}${c.phone2?'<br>'+c.phone2:''}</td><td>${c.region || '-'}</td><td>${c.devicesSummary || '-'}</td><td style="color:var(--success); font-weight:bold;">${c.totalValue || 0}</td><td><div class="action-btns"><button class="btn btn-success" onclick="printCustomerInvoice('${c.code}')">طباعة</button><button class="btn btn-secondary" onclick="openEditCustomer('${c.code}')">تعديل</button>${waBtn}<button class="btn btn-danger" onclick="deleteClientByCode('${c.code}')">حذف</button></div></td></tr>`;
                 }
@@ -1902,7 +1966,7 @@
             let html = '';
             clients.forEach(c => {
                 if(!searchVal || (String(c.name||'').toLowerCase().includes(searchVal)) || (String(c.code||'').includes(searchVal)) || (String(c.phone||'').includes(searchVal)) || (String(c.phone2||'').includes(searchVal))) {
-                    let waText = encodeURIComponent(`مرحباً ${c.name}، شهادة الضمان الخاصة بكم برقم الكود ${c.code} لمدة ${c.warrantyDuration || 'سنتان'}. بيور أكوا لأنظمة المياه النقية.`);
+                    let waText = encodeURIComponent(`مرحباً ${c.name}، شهادة الضمان الخاصة بكم برقم الكود ${c.code} لمدة ${c.warrantyDuration || 'سنتان'}. شركة أكوا بيور لتحلية المياه.`);
                     let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${c.phone}', '${waText}')">واتساب</button>`;
                     html += `<tr><td>${c.code}</td><td><strong>${c.name}</strong></td><td>${c.phone}${c.phone2?'<br>'+c.phone2:''}</td><td>${c.region || '-'}</td><td>${c.devicesSummary || '-'}</td><td><span style="background:#e0f2fe; color:var(--primary-dark); padding:3px 8px; border-radius:4px; font-weight:bold;">${c.warrantyDuration || 'سنتان'}</span></td><td><div class="action-btns"><button class="btn btn-secondary" onclick="openWarrantySettings('${c.code}')">⚙️ إعدادات</button>${waBtn} <button class="btn btn-success" onclick="printCustomerWarranty('${c.code}')">🖨️ طباعة</button></div></td></tr>`;
                 }
@@ -1912,15 +1976,35 @@
 
         function printCustomerInvoice(code) {
             let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(!c) return;
-            let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية'; let cPhone = sysSettings.phone1 || ''; let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; margin-bottom:10px; border-radius:5px;">` : ''; let custTaxHTML = c.customerTax ? `<p><strong>الرقم الضريبي للعميل:</strong> ${c.customerTax}</p>` : ''; let nationalAddrHTML = c.nationalAddress ? `<p><strong>العنوان الوطني:</strong> ${c.nationalAddress}</p>` : '';
+            let cName = sysSettings.nameAr || 'شركة أكوا بيور لتحلية المياه'; 
+            let cPhone = sysSettings.phone1 || ''; 
+            let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; 
+            let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; 
+            let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; 
+            let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; margin-bottom:10px; border-radius:5px;">` : ''; 
+            let custTaxHTML = c.customerTax ? `<p><strong>الرقم الضريبي للعميل:</strong> ${c.customerTax}</p>` : ''; 
+            let nationalAddrHTML = c.nationalAddress ? `<p><strong>العنوان الوطني:</strong> ${c.nationalAddress}</p>` : '';
+            
+            let qrText = `الشركة: ${cName}\n`;
+            if(sysSettings.address) qrText += `العنوان: ${sysSettings.address}\n`;
+            if(sysSettings.tax) qrText += `الرقم الضريبي: ${sysSettings.tax}\n`;
+            qrText += `------------------\n`;
+            qrText += `رقم الفاتورة: ${c.code}\n`;
+            qrText += `التاريخ: ${c.installDate || '-'}\n`;
+            qrText += `العميل: ${c.name}\n`;
+            qrText += `الأجهزة/الخدمات: ${c.devicesSummary || 'تركيب وصيانة'}\n`;
+            qrText += `------------------\n`;
+            qrText += `الإجمالي المستحق: ${c.totalValue || 0} SAR`;
+            let encodedQR = encodeURIComponent(qrText);
+
             let win = window.open('', '_blank');
-            win.document.write(`<html lang="ar" dir="rtl"><head><title>فاتورة - ${c.name}</title><style>body{font-family:'Cairo',sans-serif; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px; font-size:0.9rem;} th,td{border:1px solid #cbd5e1; padding:10px; text-align:right;} th{background:#f1f5f9;}</style></head><body><div style="text-align:center; border-bottom:2px solid #0284c7; padding-bottom:15px; margin-bottom:20px;">${cLogo}<h2 style="color:#0369a1; margin-bottom:5px;">${cName}</h2><p style="font-size:0.9rem; color:#64748b;">هاتف: ${cPhone}${cUnified}${cCR}${cTax}</p><h3 style="margin-top:10px; background:#f1f5f9; display:inline-block; padding:5px 15px; border-radius:5px;">فاتورة ضريبية مبسطة</h3></div><div style="display:flex; justify-content:space-between; margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:6px;"><div><p><strong>العميل / الشركة:</strong> ${c.name}</p>${custTaxHTML}${nationalAddrHTML}<p><strong>رقم الجوال:</strong> ${c.phone}${c.phone2?' / '+c.phone2:''}</p><p><strong>المنطقة:</strong> ${c.region || '-'}</p></div><div><p><strong>رقم الفاتورة:</strong> ${c.code}</p><p><strong>التاريخ:</strong> ${c.installDate || '-'}</p></div></div><table><thead><tr><th>الخدمة / الجهاز</th><th>السعر (SAR)</th></tr></thead><tbody><tr><td>${c.devicesSummary || 'تركيب وصيانة'}</td><td>${c.totalValue || 0}</td></tr></tbody></table><div style="text-align:left; font-size:1.2rem; font-weight:bold; color:#0369a1; margin-bottom:20px;">الإجمالي المستحق: ${c.totalValue || 0} SAR</div><div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #cbd5e1; padding-top:15px; color:#64748b;"><p>شكراً لاختياركم ${cName}</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=AquaPure_Inv_${c.code}_${c.totalValue}SAR" style="width:120px; height:120px;"></div><script>window.onload=function(){window.print();}<\/script></body></html>`);
+            win.document.write(`<html lang="ar" dir="rtl"><head><title>فاتورة - ${c.name}</title><style>body{font-family:'Cairo',sans-serif; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px; font-size:0.9rem;} th,td{border:1px solid #cbd5e1; padding:10px; text-align:right;} th{background:#f1f5f9;}</style></head><body><div style="text-align:center; border-bottom:2px solid #0284c7; padding-bottom:15px; margin-bottom:20px;">${cLogo}<h2 style="color:#0369a1; margin-bottom:5px;">${cName}</h2><p style="font-size:0.9rem; color:#64748b;">هاتف: ${cPhone}${cUnified}${cCR}${cTax}</p><h3 style="margin-top:10px; background:#f1f5f9; display:inline-block; padding:5px 15px; border-radius:5px;">فاتورة ضريبية مبسطة</h3></div><div style="display:flex; justify-content:space-between; margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:6px;"><div><p><strong>العميل / الشركة:</strong> ${c.name}</p>${custTaxHTML}${nationalAddrHTML}<p><strong>رقم الجوال:</strong> ${c.phone}${c.phone2?' / '+c.phone2:''}</p><p><strong>المنطقة:</strong> ${c.region || '-'}</p></div><div><p><strong>رقم الفاتورة:</strong> ${c.code}</p><p><strong>التاريخ:</strong> ${c.installDate || '-'}</p></div></div><table><thead><tr><th>الخدمة / الجهاز</th><th>السعر (SAR)</th></tr></thead><tbody><tr><td>${c.devicesSummary || 'تركيب وصيانة'}</td><td>${c.totalValue || 0}</td></tr></tbody></table><div style="text-align:left; font-size:1.2rem; font-weight:bold; color:#0369a1; margin-bottom:20px;">الإجمالي المستحق: ${c.totalValue || 0} SAR</div><div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #cbd5e1; padding-top:15px; color:#64748b;"><p>شكراً لاختياركم ${cName}</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedQR}" style="width:130px; height:130px;"></div><script>window.onload=function(){window.print();}<\/script></body></html>`);
             win.document.close();
         }
 
         function printCustomerWarranty(code) {
             let c = getDB('aqua_pure_customers_db').find(i => String(i.code) === String(code)); if(!c) return;
-            let cName = sysSettings.nameAr || 'بيور أكوا لأنظمة المياه النقية'; let cPhone = sysSettings.phone1 || ''; let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; border-radius:5px; margin-bottom:10px;">` : '';
+            let cName = sysSettings.nameAr || 'شركة أكوا بيور لتحلية المياه'; let cPhone = sysSettings.phone1 || ''; let cUnified = sysSettings.unifiedNumber ? ` | الرقم الموحد: ${sysSettings.unifiedNumber}` : ''; let cTax = sysSettings.tax ? ` | الرقم الضريبي: ${sysSettings.tax}` : ''; let cCR = sysSettings.cr ? ` | س.ت: ${sysSettings.cr}` : ''; let cLogo = sysSettings.logoBase64 ? `<img src="${sysSettings.logoBase64}" style="max-height:80px; border-radius:5px; margin-bottom:10px;">` : '';
             let win = window.open('', '_blank');
             win.document.write(`<html lang="ar" dir="rtl"><head><title>ضمان - ${c.name}</title><style>body{font-family:'Cairo',sans-serif; padding:30px; text-align:center;} .box{border:2px solid #0369a1; padding:20px; border-radius:10px;} p{text-align:right; font-size:1.1rem;}</style></head><body><div class="box"><div style="text-align:center;">${cLogo}<h2 style="color:#0369a1; margin-bottom:5px;">${cName} - شهادة ضمان</h2><p style="font-size:0.85rem; color:#64748b;">${cCR}${cTax}${cUnified}</p></div><hr><p><strong>رقم الضمان (الكود):</strong> ${c.code}</p><p><strong>العميل:</strong> ${c.name}</p><p><strong>الجوال:</strong> ${c.phone} ${c.phone2 ? ' / ' + c.phone2 : ''}</p><p><strong>المنطقة:</strong> ${c.region || '-'}</p><p><strong>الأجهزة المشمولة:</strong> ${c.devicesSummary || '-'}</p><p><strong>مدة الضمان:</strong> ${c.warrantyDuration || 'سنتان'}</p><p><strong>إجمالي الفاتورة:</strong> ${c.totalValue || 0} SAR</p><hr><h4>يسري هذا الضمان وفق الشروط والأحكام.</h4><p style="font-size:0.9rem; text-align:center;">للتواصل والدعم الفني: ${cPhone}</p></div><script>window.onload=function(){window.print();}<\/script></body></html>`);
             win.document.close();
@@ -1935,7 +2019,7 @@
                 let custCount = 0; let cardCount = 0;
                 let techMovements = getDB('aqua_pure_store_db').filter(s => s.tech === t.name);
                 let itemsSummary = techMovements.map(m => `${m.item} (${m.qty})`).join(', ');
-                let waText = encodeURIComponent(`مرحباً ${t.name}، تفاصيل حركات مخزن الفني لديكم: ${itemsSummary || 'لا توجد حركات حالية'}. بيور أكوا لأنظمة المياه النقية.`);
+                let waText = encodeURIComponent(`مرحباً ${t.name}، تفاصيل حركات مخزن الفني لديكم: ${itemsSummary || 'لا توجد حركات حالية'}. شركة أكوا بيور لتحلية المياه.`);
                 let waBtn = `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${t.phone}', '${waText}')">واتساب</button>`;
                 clients.forEach(c => { if(c.tech === t.name) { custCount++; if(c.nextMaint) cardCount++; } });
                 html+=`<tr><td>${t.name}</td><td>${t.phone||'-'}</td><td style="font-weight:bold;">${custCount}</td><td style="font-weight:bold; color:var(--primary-dark);">${cardCount}</td><td>${t.status||'نشط'}</td><td><div class="action-btns"><button class="btn btn-warning" onclick="editTechnician(${i})">تعديل</button>${waBtn}<button class="btn btn-secondary" onclick="toggleTechStatus(${i})">إيقاف/تنشيط</button> <button class="btn btn-danger" onclick="deleteTechnician(${i})">حذف</button></div></td></tr>`;
@@ -1955,7 +2039,7 @@
                 if(s.type==='صرف' || s.type==='إرجاع' || s.type==='تنزيل') {
                     let techObj = getDB('aqua_pure_techs_db').find(t => t.name === s.tech);
                     let techPhone = techObj ? techObj.phone : '';
-                    let waText = encodeURIComponent(`مرحباً ${s.tech}، تفاصيل حركة المخزن: ${s.type} - ${s.item} (الكمية: ${q}) بتاريخ ${s.date}. (بيور أكوا لأنظمة المياه النقية).`);
+                    let waText = encodeURIComponent(`مرحباً ${s.tech}، تفاصيل حركة المخزن: ${s.type} - ${s.item} (الكمية: ${q}) بتاريخ ${s.date}. (شركة أكوا بيور لتحلية المياه).`);
                     let waBtn = techPhone ? `<button type="button" class="btn btn-whatsapp" style="padding:2px 5px;" onclick="sendWhatsAppMsg('${techPhone}', '${waText}')">واتساب</button>` : '';
                     mHtml+=`<tr><td>${s.tech}</td><td><span style="background:#f1f5f9; padding:2px 5px; border-radius:3px;">${s.type}</span></td><td>${s.item}</td><td>${q}</td><td>${s.date}</td><td><div class="action-btns"><button class="btn btn-secondary" style="padding:2px 5px;" onclick="alert('تفاصيل الحركات')">فتح</button>${waBtn} <button class="btn btn-danger" style="padding:2px 5px;" onclick="deleteStoreItem('${s.id}')">حذف</button></div></td></tr>`;
                 }
@@ -1976,7 +2060,7 @@
                 if(s.qty !== 0) { 
                     let techObj = getDB('aqua_pure_techs_db').find(t => t.name === s.tech);
                     let techPhone = techObj ? techObj.phone : '';
-                    let reportMsg = encodeURIComponent(`مرحباً يا الكابتن ${s.tech}، مرفق تقرير بعهدتك الحالية:\n${techReports[s.tech] ? techReports[s.tech].join('\n') : ''}\n(بيور أكوا لأنظمة المياه النقية)`);
+                    let reportMsg = encodeURIComponent(`مرحباً يا الكابتن ${s.tech}، مرفق تقرير بعهدتك الحالية:\n${techReports[s.tech] ? techReports[s.tech].join('\n') : ''}\n(شركة أكوا بيور لتحلية المياه)`);
                     let waBtn = techPhone ? `<button type="button" class="btn btn-whatsapp" style="padding:4px 8px;" onclick="sendWhatsAppMsg('${techPhone}', '${reportMsg}')">واتساب</button>` : '';
                     let color = s.qty < 0 ? 'color: var(--danger);' : 'color: var(--primary-dark);';
                     html+=`<tr><td>${s.tech}</td><td>${s.item}</td><td style="font-weight:bold; ${color}">${s.qty}</td><td style="text-align:center;"><div class="action-btns"><button class="btn btn-warning" style="padding:4px 8px;" onclick="openStoreActionModal('صرف')">تعديل</button>${waBtn}</div></td></tr>`;
