@@ -539,7 +539,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin: 0;">💾 النسخة الاحتياطية وإدارة البيانات</h2>
                         <span style="font-size: 0.9rem; color: var(--success); font-weight: bold; background: #f0fdf4; padding: 6px 12px; border-radius: 6px; border: 1px solid #bbf7d0;">
-                            ℹ️ يتم أخذ نسخة احتياطية يومية وتخزينها سحابياً لضمان حفظ البيانات
+                            ℹ️ يتم أخذ نسخة احتياطية يومية وتلقائية
                         </span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
@@ -548,16 +548,16 @@
                         <div class="card" style="margin:0; text-align:center;"><h3 style="color:#64748b; font-size:1rem;">حركات المخزن</h3><div id="bkp-store-count" style="font-size:2rem; font-weight:bold; color:var(--warning);">0</div></div>
                     </div>
                     <div class="card" style="margin-bottom: 20px;">
-                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي</h3>
+                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">☁️ سجل النسخ الاحتياطي السحابي اليومي</h3>
                         <div class="table-responsive">
                             <table>
-                                <thead><tr><th>التاريخ</th><th>الوقت</th><th>الوصف / ملف تعريف</th><th style="text-align:center;">الإجراءات</th></tr></thead>
+                                <thead><tr><th>التاريخ</th><th>وقت الحفظ السحابي</th><th>الحالة</th><th>ملف التعريف (الوصف)</th><th style="text-align:center;">الإجراء</th></tr></thead>
                                 <tbody id="cloud-backup-log-table"></tbody>
                             </table>
                         </div>
                     </div>
                     <div class="card">
-                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">📥 تحميل نسخة احتياطية محلية إلى جهازك</h3>
+                        <h3 style="color:var(--primary-dark); margin-bottom:15px;">📥 تحميل نسخة احتياطية محلية</h3>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
                             <button class="btn btn-success" onclick="triggerBackup()">تنزيل نسخة احتياطية كاملة (JSON)</button>
                         </div>
@@ -641,7 +641,7 @@
         </div>
     </div>
 
-    <!-- Modal: تحديث الصيانة (المطور مع الخصم التلقائي) -->
+    <!-- Modal: تحديث الصيانة -->
     <div id="maintenanceModal" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <h3 style="margin-bottom: 15px; color: var(--primary-dark);">🛠️ تحديث الصيانة</h3>
@@ -790,7 +790,8 @@
             'aqua_pure_coordinators_db': 'coordinators',
             'aqua_pure_sys_settings_db': 'sysSettings',
             'aqua_pure_quotes_db': 'quotes',
-            'aqua_pure_expenses_db': 'expenses'
+            'aqua_pure_expenses_db': 'expenses',
+            'aqua_pure_backup_logs_db': 'backupLogs'
         };
 
         // المزامنة اللحظية (Real-time Sync)
@@ -824,6 +825,25 @@
             } catch(e) { return []; } 
         }
 
+        // ==========================================
+        // الصيانة التلقائية للبيانات (إصلاح تضاعف المبالغ القديمة)
+        // ==========================================
+        function runSilentDataFix() {
+            let clients = getDB('aqua_pure_customers_db');
+            let needsUpdate = false;
+            clients.forEach(c => {
+                // لو مبلغ التركيب هو نفسه مبلغ الصيانة وتاريخ التركيب هو نفسه تاريخ الصيانة (ده بسبب خطأ الكود القديم وقت إضافة العميل)
+                if (c.totalValue && c.lastMaintValue && parseFloat(c.totalValue) === parseFloat(c.lastMaintValue) && c.installDate === c.lastMaint) {
+                    c.lastMaintValue = 0; // تصفير مبلغ الصيانة المنسوخ بالخطأ
+                    needsUpdate = true;
+                }
+            });
+            if (needsUpdate) {
+                setDB('aqua_pure_customers_db', clients);
+                console.log('✅ تم إصلاح تضاعف المبالغ في قاعدة البيانات بنجاح.');
+            }
+        }
+
         let homeCurrentPage = 1;
         let custCurrentPage = 1;
         const rowsPerPage = 15;
@@ -846,7 +866,7 @@
                 if(tabId === 'reports') loadReportsData();
                 if(tabId === 'financials') renderFinancials();
                 if(tabId === 'users-permissions') renderUsersList();
-                if(tabId === 'backup-restore') updateBackupCounters();
+                if(tabId === 'backup-restore') { updateBackupCounters(); renderBackupLogs(); }
             }
         }
 
@@ -897,6 +917,7 @@
         if(getDB('aqua_pure_delegates_db').length === 0) setDB('aqua_pure_delegates_db', ["مندوب 1"]);
         if(getDB('aqua_pure_coordinators_db').length === 0) setDB('aqua_pure_coordinators_db', ["منسق 1"]);
         if(getDB('aqua_pure_techs_db').length === 0) setDB('aqua_pure_techs_db', [{ name: "أحمد البصراطي", phone: "0500000001", status: "نشط" }]);
+        if(getDB('aqua_pure_backup_logs_db').length === 0) setDB('aqua_pure_backup_logs_db', []);
         
         let defaultPerms = ["الرئيسية", "العملاء والموردون", "بطاقات الصيانات", "تذكير الصيانات", "إدارة الفنيين", "مخزن الفنيين", "تصفية الكاش", "البيانات الأساسية", "كروت الضمان", "فواتير QR", "عروض الأسعار", "التقارير الشاملة", "المالية والمصروفات", "الإعدادات الأساسية", "النسخة الاحتياطية", "المستخدمون والصلاحيات"];
         if(getDB('aqua_pure_users_db').length === 0) setDB('aqua_pure_users_db', [{ user: "Admin", pass: "1234", perms: defaultPerms, status: "active" }]);
@@ -909,6 +930,9 @@
         let currentModalMode = 'device';
 
         window.addEventListener('load', () => {
+            // تشغيل الإصلاح الصامت لمشكلة تضاعف المبالغ
+            runSilentDataFix();
+            
             let loggedIn = localStorage.getItem('logged_in');
             let currentUserName = localStorage.getItem('current_user_name');
             let currentUserPerms = JSON.parse(localStorage.getItem('current_user_perms') || JSON.stringify(defaultPerms));
@@ -941,18 +965,20 @@
             else { aside.classList.add('open'); overlay.classList.add('open'); }
         }
 
-        // ==============================================================
-        // حل المشكلة رقم 1: نظام الدخول للمستخدمين الجدد (تجاهل المسافات)
-        // ==============================================================
         function handleLogin(e) {
             e.preventDefault();
             let u = document.getElementById('login-username').value.trim().toLowerCase();
             let p = document.getElementById('login-password').value.trim();
             p = p.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+            
             let users = getDB('aqua_pure_users_db');
             
-            // إضافة trim() لاسم المستخدم وكلمة المرور من قاعدة البيانات لضمان عدم وجود مسافات وهمية
-            let validUser = users.find(x => x && x.user && String(x.user).trim().toLowerCase() === u && String(x.pass).trim() === p);
+            let validUser = users.find(x => {
+                if(!x || !x.user || !x.pass) return false;
+                let dbUser = x.user.trim().toLowerCase();
+                let dbPass = x.pass.trim();
+                return dbUser === u && dbPass === p;
+            });
             
             if(!validUser && (u === 'admin' || u === 'أدمن' || u === 'ادمن') && p === '1234') { 
                 validUser = { user: "Admin", perms: defaultPerms, status: "active" }; 
@@ -968,7 +994,9 @@
                 applyPermissions(validUser.perms || defaultPerms);
                 document.getElementById('current-user-display').innerText = "المستخدم: " + validUser.user;
                 loadSystemSettingsUI(); populateDynamicDropdowns(); switchTab('home', document.querySelector('.nav-links li[data-target="home"]'));
-            } else { alert('بيانات الدخول خاطئة!'); }
+            } else { 
+                alert('بيانات الدخول خاطئة! تأكد من اسم المستخدم وكلمة المرور.'); 
+            }
         }
 
         function logout() { if(confirm('هل تريد تسجيل الخروج؟')) { localStorage.removeItem('logged_in'); localStorage.removeItem('current_user_name'); localStorage.removeItem('current_user_perms'); window.location.reload(); } }
@@ -1174,102 +1202,97 @@
             if(document.getElementById('expenses-table-body')) { document.getElementById('expenses-table-body').innerHTML = html || `<tr><td colspan="4" style="text-align:center;">لا توجد مصروفات مسجلة في هذه الفترة</td></tr>`; }
         }
 
-        // ==============================================================
-        // حل المشكلة رقم 2: النسخ الاحتياطي التلقائي والجداول
-        // ==============================================================
-        function initAutoBackup() {
-            let todayStr = new Date().toISOString().split('T')[0];
+        // ==========================================
+        // النسخ الاحتياطي التلقائي
+        // ==========================================
+        function checkAndRunBackup() {
+            let now = new Date();
+            let todayStr = now.toISOString().split('T')[0]; // صيغة YYYY-MM-DD
+            let lastBackup = localStorage.getItem('last_auto_backup_date');
             
-            // 1. الاستماع للبيانات الوصفية للنسخ من فايربيز لعرضها في الجدول فوراً
-            database.ref('backup_metadata').on('value', (snapshot) => {
-                let metadata = snapshot.val();
-                let tbody = document.getElementById('cloud-backup-log-table');
-                if(!tbody) return;
-                
-                let html = '';
-                let hasTodayBackup = false;
-                
-                if(metadata) {
-                    let keys = Object.keys(metadata).sort((a,b) => b.localeCompare(a)); // ترتيب تنازلي (الأحدث فوق)
-                    keys.forEach(k => {
-                        if(k === todayStr) hasTodayBackup = true;
-                        let desc = metadata[k].description || 'نسخة احتياطية تلقائية';
-                        let time = metadata[k].time || '-';
-                        html += `<tr>
-                            <td>${k}</td>
-                            <td>${time}</td>
-                            <td style="color:var(--primary-dark); font-weight:bold;">${desc}</td>
-                            <td style="text-align: center;">
-                                <div class="action-btns">
-                                    <button class="btn btn-warning" style="padding: 4px 8px;" onclick="addBackupDescription('${k}')">إضافة ملف تعريف</button>
-                                    <button class="btn btn-danger" style="padding: 4px 8px;" onclick="deleteCloudBackup('${k}')">حذف</button>
-                                </div>
-                            </td>
-                        </tr>`;
-                    });
-                } else {
-                    html = '<tr><td colspan="4" style="text-align:center;">لا توجد نسخ احتياطية سحابية حتى الآن</td></tr>';
-                }
-                tbody.innerHTML = html;
-
-                // 2. فحص هل أخذنا نسخة اليوم؟ لو لسه، ياخدها فوراً أول ما تفتح البرنامج!
-                let lastBackup = localStorage.getItem('last_auto_backup_date');
-                if(!hasTodayBackup && lastBackup !== todayStr) {
-                    performCloudBackup();
-                }
-            });
-
-            // 3. مراقبة الوقت كل دقيقة عشان لو البرنامج مفتوح الساعة 12 بالليل يأخذها في وقتها
-            setInterval(() => {
-                let now = new Date();
-                if(now.getHours() === 0 && now.getMinutes() === 0) {
-                    let currentTodayStr = now.toISOString().split('T')[0];
-                    let currentLast = localStorage.getItem('last_auto_backup_date');
-                    if(currentLast !== currentTodayStr) { 
-                        performCloudBackup(); 
-                    }
-                }
-            }, 60000);
+            if(lastBackup !== todayStr) { 
+                performCloudBackup(todayStr); 
+                localStorage.setItem('last_auto_backup_date', todayStr); 
+            }
         }
 
-        function performCloudBackup() {
+        function initAutoBackup() {
+            checkAndRunBackup();
+            setInterval(checkAndRunBackup, 60000);
+        }
+
+        function performCloudBackup(backupId) {
             let allData = {};
-            for (let localKey in dbMap) { allData[dbMap[localKey]] = getDB(localKey); }
+            for (let localKey in dbMap) { 
+                if (localKey !== 'aqua_pure_backup_logs_db') {
+                    allData[dbMap[localKey]] = getDB(localKey); 
+                }
+            }
             let now = new Date();
-            let backupId = now.toISOString().split('T')[0];
             let timeStr = now.toLocaleTimeString('ar-SA');
             
-            // حفظ الداتا الكاملة في مسار
             database.ref('backups/' + backupId).set(allData).then(() => {
-                // حفظ البيانات الوصفية في مسار خفيف عشان الجدول يقرأه بسرعة بدون تحميل كل الداتا
-                database.ref('backup_metadata/' + backupId).set({
-                    time: timeStr,
-                    description: 'نسخة احتياطية تلقائية'
-                });
-                localStorage.setItem('last_auto_backup_date', backupId);
+                let logs = getDB('aqua_pure_backup_logs_db');
+                let existingIdx = logs.findIndex(l => l.id === backupId);
+                if (existingIdx >= 0) {
+                    logs[existingIdx].time = timeStr; 
+                } else {
+                    logs.unshift({ id: backupId, time: timeStr, status: 'نجاح', desc: '' });
+                }
+                setDB('aqua_pure_backup_logs_db', logs);
+                renderBackupLogs();
+            }).catch(err => {
+                let logs = getDB('aqua_pure_backup_logs_db');
+                logs.unshift({ id: backupId, time: timeStr, status: 'فشل', desc: err.message });
+                setDB('aqua_pure_backup_logs_db', logs);
+                renderBackupLogs();
             });
         }
 
-        // إضافة ملف تعريف / وصف للنسخة
-        function addBackupDescription(backupId) {
-            let desc = prompt("أدخل ملف التعريف / الوصف لهذه النسخة:", "مثال: نسخة قبل تحديث الأسعار");
-            if(desc && desc.trim() !== "") {
-                database.ref('backup_metadata/' + backupId + '/description').set(desc.trim()).then(() => {
-                    alert('تم حفظ ملف التعريف بنجاح!');
-                });
+        function renderBackupLogs() {
+            let logs = getDB('aqua_pure_backup_logs_db');
+            let html = '';
+            logs.forEach((log) => {
+                let statusHtml = log.status === 'نجاح' ? `<span style="color: var(--success); font-weight: bold;">تم الحفظ السحابي بنجاح ✅</span>` : `<span style="color: var(--danger); font-weight: bold;">فشل ❌</span>`;
+                let descText = log.desc ? log.desc : '<span style="color:#94a3b8; font-size:0.85rem;">لا يوجد</span>';
+                html += `<tr>
+                    <td>${log.id}</td>
+                    <td>${log.time}</td>
+                    <td>${statusHtml}</td>
+                    <td><strong>${descText}</strong></td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-secondary" style="padding: 4px 8px; margin-left: 5px;" onclick="addBackupDesc('${log.id}')">إضافة ملف تعريف</button>
+                        <button class="btn btn-danger" style="padding: 4px 8px;" onclick="deleteBackupLog('${log.id}')">حذف</button>
+                    </td>
+                </tr>`;
+            });
+            let tbody = document.getElementById('cloud-backup-log-table');
+            if(tbody) tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">لا توجد سجلات حالية. سيتم أخذ أول نسخة فوراً...</td></tr>';
+        }
+
+        function addBackupDesc(id) {
+            let logs = getDB('aqua_pure_backup_logs_db');
+            let logIdx = logs.findIndex(l => l.id === id);
+            if(logIdx >= 0) {
+                let currentDesc = logs[logIdx].desc || '';
+                let newDesc = prompt('أدخل ملف التعريف (وصف لهذه النسخة):', currentDesc);
+                if(newDesc !== null) {
+                    logs[logIdx].desc = newDesc.trim();
+                    setDB('aqua_pure_backup_logs_db', logs);
+                    renderBackupLogs();
+                }
             }
         }
 
-        // حذف النسخة الاحتياطية نهائياً من فايربيز
-        function deleteCloudBackup(backupId) {
-            if(confirm('تحذير شديد: هل أنت متأكد من حذف هذه النسخة الاحتياطية نهائياً من السيرفر السحابي؟')) {
-                database.ref('backups/' + backupId).remove();
-                database.ref('backup_metadata/' + backupId).remove().then(() => {
-                    alert('تم حذف النسخة بنجاح!');
-                });
+        function deleteBackupLog(id) {
+            if(confirm('هل أنت متأكد من حذف هذا السجل من الجدول؟ (ملاحظة: هذا سيحذف السجل من الجدول فقط)')) {
+                let logs = getDB('aqua_pure_backup_logs_db');
+                logs = logs.filter(l => l.id !== id);
+                setDB('aqua_pure_backup_logs_db', logs);
+                renderBackupLogs();
             }
         }
-        
+
         initAutoBackup();
 
         // ==========================================
@@ -1406,6 +1429,9 @@
 
         function calculateModalTotal() { let t = 0; document.querySelectorAll('.cust-dev-price').forEach(i => t += parseFloat(i.value)||0); if(document.getElementById('cust-total-price')) document.getElementById('cust-total-price').innerText = t; }
 
+        // =========================================================
+        // التعديل الرئيسي لمنع التضاعف في حساب مبالغ العملاء
+        // =========================================================
         function saveCustomerAndMaintenance(e) {
             e.preventDefault();
             let code = document.getElementById('c-code').value; let type = document.getElementById('c-type').value; let customerTax = document.getElementById('c-tax-number').value.trim(); let name = document.getElementById('c-name').value.trim(); let phone = document.getElementById('c-phone').value.trim(); let phone2 = document.getElementById('c-phone2').value.trim(); let address = document.getElementById('c-address').value.trim(); let nationalAddress = document.getElementById('c-national-address') ? document.getElementById('c-national-address').value.trim() : ''; let gps = document.getElementById('c-gps').value.trim(); let region = document.getElementById('c-region').value; let tech = document.getElementById('c-tech').value; let coordinator = document.getElementById('c-coordinator').value; let delegate = document.getElementById('c-delegate').value; let notes = document.getElementById('c-notes').value.trim(); 
@@ -1420,19 +1446,36 @@
                 devicesSummaryArr.push(`${itemName} (${p} SAR)`); 
                 if(itemName && itemName !== "عنصر عام") itemsToDeduct.push(itemName);
             });
-            let devicesSummary = devicesSummaryArr.join('، '); let clients = getDB('aqua_pure_customers_db'); let idx = clients.findIndex(i => String(i.code) === String(code));
+            let devicesSummary = devicesSummaryArr.join('، '); 
+            let clients = getDB('aqua_pure_customers_db'); 
+            let idx = clients.findIndex(i => String(i.code) === String(code));
             let isEdit = idx >= 0;
 
-            if(isEdit) { 
-                clients[idx] = { ...clients[idx], type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, nextMaint: nextMaintDate }; 
+            let isExternalMaint = (currentModalMode === 'reason'); // تحديد إذا كانت العملية صيانة خارجية أم تركيب جديد
+
+            if (isEdit) { 
+                clients[idx] = { 
+                    ...clients[idx], 
+                    type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, 
+                    totalValue: totalValue, // تحديث مبلغ الأجهزة (لا يتم تحديث مبلغ الصيانة هنا للحفاظ عليه كما هو)
+                    installDate, nextMaint: nextMaintDate 
+                }; 
             } else { 
-                clients.push({ code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, totalValue, installDate, lastMaint: installDate, lastMaintValue: totalValue, nextMaint: nextMaintDate, warrantyDuration: "سنتان", installSettled: false, lastMaintSettled: false }); 
+                // فصل مبلغ التركيب عن مبلغ الصيانة بناءً على نوع الإضافة
+                clients.push({ 
+                    code, type, customerTax, name, phone, phone2, address, nationalAddress, gps, region, tech, coordinator, delegate, notes, devicesSummary, 
+                    totalValue: isExternalMaint ? 0 : totalValue, 
+                    installDate: isExternalMaint ? "" : installDate, 
+                    lastMaint: installDate, 
+                    lastMaintValue: isExternalMaint ? totalValue : 0, 
+                    nextMaint: nextMaintDate, warrantyDuration: "سنتان", installSettled: false, lastMaintSettled: false 
+                }); 
             }
             setDB('aqua_pure_customers_db', clients); 
 
             let autoDeductCheckbox = document.getElementById('c-auto-deduct');
             let deductMsg = "";
-            if(autoDeductCheckbox && autoDeductCheckbox.checked && tech && itemsToDeduct.length > 0) {
+            if (autoDeductCheckbox && autoDeductCheckbox.checked && tech && itemsToDeduct.length > 0) {
                 let storeDb = getDB('aqua_pure_store_db');
                 let deductMap = {};
                 itemsToDeduct.forEach(item => { deductMap[item] = (deductMap[item] || 0) + 1; });
@@ -1511,9 +1554,6 @@
             document.getElementById('maintenance-cards-body').innerHTML = html || '<tr><td colspan="9" style="text-align:center;">لا توجد بطاقات صيانة</td></tr>';
         }
 
-        // ==========================================
-        // وظائف الصيانة الجديدة مع التنزيل من العهدة
-        // ==========================================
         function addMaintDeviceRow() {
             let list = [...new Set([...getDB('aqua_pure_devices_db'), ...getDB('aqua_pure_reasons_db')])];
             if(list.length===0) list=["عنصر عام"]; 
@@ -1574,7 +1614,7 @@
                     if(itemName && itemName !== "عنصر عام") itemsToDeduct.push(itemName);
                 });
                 
-                c.lastMaintValue = totalValue;
+                c.lastMaintValue = totalValue; // يحفظ مبلغ الصيانة فقط هنا، ولا يضاعفه في خانة مبلغ التركيب (c.totalValue)
                 c.lastMaintSettled = false;
                 setDB('aqua_pure_customers_db', clients); 
                 
@@ -2018,9 +2058,6 @@
             if(confirm('تأكيد الحذف؟')) { let list = getDB(key).filter(i => i !== val); setDB(key, list); renderAllActive(); populateDynamicDropdowns(); } 
         }
 
-        // ==============================================================
-        // حل المشكلة رقم 1 (الجزء الخاص بإنشاء المستخدم) - إضافة trim()
-        // ==============================================================
         function renderUsersList() { 
             let html=''; let s = document.getElementById('search-users-input') ? document.getElementById('search-users-input').value.toLowerCase() : '';
             getDB('aqua_pure_users_db').forEach((u,i) => {
@@ -2033,23 +2070,26 @@
         }
         function openUserModal() { document.getElementById('u-edit-index').value=''; document.getElementById('u-username').value=''; document.getElementById('u-password').value=''; document.getElementById('u-status').value='active'; document.querySelectorAll('.u-perm').forEach(c=>c.checked=false); document.querySelector('.u-perm[value="الرئيسية"]').checked=true; document.getElementById('userModal').style.display='flex'; }
         function openEditUser(i) { let u=getDB('aqua_pure_users_db')[i]; document.getElementById('u-edit-index').value=i; document.getElementById('u-username').value=u.user; document.getElementById('u-password').value=u.pass; document.getElementById('u-status').value=u.status; document.querySelectorAll('.u-perm').forEach(c=>c.checked=(u.perms||[]).includes(c.value)); document.querySelector('.u-perm[value="الرئيسية"]').checked=true; document.getElementById('userModal').style.display='flex'; }
+        
         function saveUser(e) { 
             e.preventDefault(); 
             let idx=document.getElementById('u-edit-index').value; 
             let u=getDB('aqua_pure_users_db'); 
             let perms=Array.from(document.querySelectorAll('.u-perm:checked')).map(c=>c.value); 
+            
             let data={
-                // مسح المسافات هنا لضمان عدم وجود مسافات وهمية
                 user: document.getElementById('u-username').value.trim(), 
                 pass: document.getElementById('u-password').value.trim(), 
                 perms, 
                 status: document.getElementById('u-status').value
             }; 
+            
             if(idx!=='') u[idx]=data; else u.push(data); 
             setDB('aqua_pure_users_db',u); 
             document.getElementById('userModal').style.display='none'; 
             renderAllActive(); 
         }
+
         function deleteUser(i) { let u=getDB('aqua_pure_users_db'); if(u[i].user==='Admin')return alert('لا يمكن حذف المدير'); u.splice(i,1); setDB('aqua_pure_users_db',u); renderAllActive(); }
 
         function toggleAdvCustomDate() {
